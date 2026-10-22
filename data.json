@@ -4,6 +4,7 @@
     "name": "Telegram Mini App Bot",
     "version": "v2.8.0",
     "category": "Android",
+    "channel": "stable",
     "filename": "app-demo.apk",
     "size": "28.5 MB",
     "downloads": 1420,
