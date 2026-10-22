@@ -1,155 +1,212 @@
+// Dữ liệu mẫu mặc định (Sẽ lưu và đồng bộ qua localStorage)
+const defaultApps = [
+    {
+        id: "app-1",
+        title: "Automation Workflows Hub",
+        category: "Tools",
+        version: "v2.5.0 • 60 MB",
+        description: "Hệ thống quản lý kịch bản tự động hóa, nuôi tài khoản và Reg Webhook.",
+        downloadUrl: "downloads/automation-tool.exe",
+        iconClass: "fa-solid fa-robot"
+    },
+    {
+        id: "app-2",
+        title: "AI Subtitle & Translator Studio",
+        category: "Tools",
+        version: "v3.5.0 PRO • 320 MB",
+        description: "Trích xuất âm thanh, tạo phụ đề tự động bằng AI Whisper & Gemini.",
+        downloadUrl: "https://drive.google.com",
+        iconClass: "fa-solid fa-closed-captioning"
+    },
+    {
+        id: "app-3",
+        title: "Telegram Bot & Mini App Manager",
+        category: "Android",
+        version: "v2.8.1 • 45 MB",
+        description: "Quản lý Bot Telegram, Webhook và điều khiển VPS trực tiếp trên Android.",
+        downloadUrl: "downloads/telegram-app.apk",
+        iconClass: "fa-brands fa-telegram"
+    }
+];
+
+let appsData = JSON.parse(localStorage.getItem('appstore_apps')) || defaultApps;
+let isAdminMode = false;
+
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const tagBtns = document.querySelectorAll('.tag-btn');
-    const appCards = document.querySelectorAll('.app-card-vip');
-    const checkboxes = document.querySelectorAll('.app-checkbox');
-    const btnBatchDownload = document.getElementById('btnBatchDownload');
-    const selectedCountEl = document.getElementById('selectedCount');
-    const userPointsEl = document.getElementById('userPoints');
+    renderUserApps('all');
+    renderAdminTable();
 
-    let selectedApps = [];
-    let currentPoints = parseInt(localStorage.getItem('vip_pts')) || 1250;
-    userPointsEl.textContent = currentPoints.toLocaleString();
-
-    // 1. TÍNH NĂNG MỚI: Tải Hàng Loạt (Batch Download)
-    checkboxes.forEach(chk => {
-        chk.addEventListener('change', () => {
-            const appId = chk.dataset.appId;
-            if (chk.checked) {
-                selectedApps.push(appId);
-            } else {
-                selectedApps = selectedApps.filter(id => id !== appId);
-            }
-
-            selectedCountEl.textContent = selectedApps.length;
-            if (selectedApps.length > 0) {
-                btnBatchDownload.classList.remove('disabled');
-            } else {
-                btnBatchDownload.classList.add('disabled');
-            }
-        });
-    });
-
-    btnBatchDownload.addEventListener('click', () => {
-        if (selectedApps.length === 0) return;
-
-        showToastVIP(`Đang chuẩn bị tải ${selectedApps.length} ứng dụng cùng lúc...`);
-        selectedApps.forEach(appId => {
-            const card = document.querySelector(`.app-card-vip[data-id="${appId}"]`);
-            const downloadBtn = card.querySelector('.btn-download-vip');
-            
-            // Kích hoạt link tải tự động
-            const link = document.createElement('a');
-            link.href = downloadBtn.href;
-            link.download = '';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        });
-
-        // Tặng điểm VIP khi sử dụng Batch Download
-        addVipPoints(50);
-    });
-
-    // 2. Lọc danh mục & Tìm kiếm
-    tagBtns.forEach(btn => {
+    // Lọc danh mục User View
+    document.querySelectorAll('.tag-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            tagBtns.forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            const filter = btn.dataset.filter;
-
-            appCards.forEach(card => {
-                const category = card.dataset.category;
-                if (filter === 'all' || category === filter) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
+            renderUserApps(btn.dataset.filter);
         });
     });
 
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        appCards.forEach(card => {
-            const title = card.querySelector('h3').textContent.toLowerCase();
-            const desc = card.querySelector('.description').textContent.toLowerCase();
-            if (title.includes(query) || desc.includes(query)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
-            }
-        });
-    });
-
-    // Tải tự động GitHub Releases
-    initGitHubReleases();
+    // Form CRUD Submit
+    document.getElementById('appCrudForm').addEventListener('submit', handleCrudSubmit);
 });
 
-// 3. TÍNH NĂNG MỚI: Tích điểm Gamification
-function addVipPoints(pts) {
-    let currentPoints = parseInt(localStorage.getItem('vip_pts')) || 1250;
-    currentPoints += pts;
-    localStorage.setItem('vip_pts', currentPoints);
-    document.getElementById('userPoints').textContent = currentPoints.toLocaleString();
-    showToastVIP(`+${pts} Gem Points VIP!`);
+// Switch chế độ User / Admin
+function toggleAdminPanel() {
+    isAdminMode = !isAdminMode;
+    const userView = document.getElementById('userView');
+    const adminPanel = document.getElementById('adminPanel');
+    const btnText = document.getElementById('adminToggleText');
+
+    if (isAdminMode) {
+        userView.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        btnText.textContent = "Xem Trang Khách";
+        showToastVIP("Đã mở giao diện Quản Trị Admin!");
+    } else {
+        adminPanel.classList.add('hidden');
+        userView.classList.remove('hidden');
+        btnText.textContent = "Quản Trị Admin";
+        renderUserApps('all');
+    }
 }
 
-function triggerVipEffect() {
-    addVipPoints(100);
-    showToastVIP("Đã kích hoạt chế độ Tải Siêu Tốc 100MB/s!");
+// Render Danh Sách Ứng Dụng lên Trang Khách (User View)
+function renderUserApps(filterCategory) {
+    const grid = document.getElementById('appGrid');
+    grid.innerHTML = '';
+
+    const filtered = (filterCategory === 'all') 
+        ? appsData 
+        : appsData.filter(a => a.category === filterCategory);
+
+    filtered.forEach(app => {
+        const card = document.createElement('div');
+        card.className = 'app-card-vip';
+        card.innerHTML = `
+            <div class="vip-ribbon"><i class="fa-solid fa-crown"></i> VIP</div>
+            <div class="app-info-vip">
+                <div class="app-icon-vip tools-glow">
+                    <i class="${app.iconClass || 'fa-solid fa-cube'}"></i>
+                </div>
+                <div class="app-details-vip">
+                    <h3>${app.title}</h3>
+                    <p class="version">${app.version}</p>
+                    <p class="description">${app.description}</p>
+                </div>
+            </div>
+            <div class="card-stats-vip">
+                <span><i class="fa-solid fa-star text-gold"></i> 5.0</span>
+                <span class="speed-tag"><i class="fa-solid fa-shield-halved"></i> Verified</span>
+            </div>
+            <div class="card-actions-vip">
+                <a href="${app.downloadUrl}" target="_blank" class="btn-download-vip w-100" download>
+                    <i class="fa-solid fa-download"></i> Tải Về Ngay
+                </a>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
 }
 
-// 4. Modal & Bình luận
-function openModal(appId) {
-    const card = document.querySelector(`.app-card-vip[data-id="${appId}"]`);
-    if (!card) return;
+// Render Bảng Quản Trị Admin
+function renderAdminTable() {
+    const tbody = document.getElementById('adminAppTableBody');
+    tbody.innerHTML = '';
 
-    document.getElementById('modalTitle').textContent = card.querySelector('h3').textContent;
-    document.getElementById('modalVersion').textContent = card.querySelector('.version').textContent;
-    document.getElementById('modalChangelog').textContent = card.dataset.changelog || 'Chưa có ghi chú.';
-    
-    // Icon
-    const iconClone = card.querySelector('.app-icon-vip').cloneNode(true);
-    const modalIconBox = document.getElementById('modalIcon');
-    modalIconBox.innerHTML = '';
-    modalIconBox.className = iconClone.className;
-    modalIconBox.appendChild(iconClone.children[0].cloneNode(true));
-
-    // Screenshot
-    const gallery = document.getElementById('modalScreenshots');
-    gallery.innerHTML = '';
-    const screens = card.dataset.screens ? card.dataset.screens.split(',') : [];
-    screens.forEach(src => {
-        const img = document.createElement('img');
-        img.src = src;
-        gallery.appendChild(img);
+    appsData.forEach((app, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><div class="tbl-icon"><i class="${app.iconClass || 'fa-solid fa-cube'}"></i></div></td>
+            <td><strong>${app.title}</strong></td>
+            <td><span class="badge-pro">${app.category}</span></td>
+            <td>${app.version}</td>
+            <td style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${app.downloadUrl}</td>
+            <td>
+                <button class="btn-action-edit" onclick="editApp('${app.id}')"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn-action-delete" onclick="deleteApp('${app.id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
     });
 
-    document.getElementById('modalDownloadBtn').href = card.querySelector('.btn-download-vip').href;
-    document.getElementById('appModal').classList.remove('hidden');
+    document.getElementById('statTotalApps').textContent = appsData.length;
 }
 
-function closeModal() {
-    document.getElementById('appModal').classList.add('hidden');
+// Mở Modal Form CRUD
+function openAppFormModal() {
+    document.getElementById('appCrudForm').reset();
+    document.getElementById('appFormId').value = '';
+    document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-plus text-gold"></i> Thêm Phần Mềm Mới`;
+    document.getElementById('appFormModal').classList.remove('hidden');
 }
 
-function postComment() {
-    const input = document.getElementById('commentInput');
-    const val = input.value.trim();
-    if (!val) return;
-
-    const list = document.getElementById('commentsList');
-    const item = document.createElement('div');
-    item.className = 'comment-item';
-    item.innerHTML = `<strong><i class="fa-solid fa-crown text-gold"></i> VIP_User:</strong> ${val}`;
-    list.prepend(item);
-    input.value = '';
-
-    addVipPoints(10);
+function closeAppFormModal() {
+    document.getElementById('appFormModal').classList.add('hidden');
 }
 
-// Toast System
+// Sửa Phần Mềm
+function editApp(id) {
+    const app = appsData.find(a => a.id === id);
+    if (!app) return;
+
+    document.getElementById('appFormId').value = app.id;
+    document.getElementById('formTitle').value = app.title;
+    document.getElementById('formCategory').value = app.category;
+    document.getElementById('formVersion').value = app.version;
+    document.getElementById('formDescription').value = app.description;
+    document.getElementById('formDownloadUrl').value = app.downloadUrl;
+    document.getElementById('formIconClass').value = app.iconClass;
+
+    document.getElementById('formModalTitle').innerHTML = `<i class="fa-solid fa-pen-to-square text-gold"></i> Chỉnh Sửa Phần Mềm`;
+    document.getElementById('appFormModal').classList.remove('hidden');
+}
+
+// Xóa Phần Mềm
+function deleteApp(id) {
+    if (confirm("Bạn có chắc chắn muốn xóa phần mềm này khỏi hệ thống?")) {
+        appsData = appsData.filter(a => a.id !== id);
+        saveAndSync();
+        showToastVIP("Đã xóa phần mềm thành công!");
+    }
+}
+
+// Xử lý Lưu Form (Thêm mới hoặc Cập nhật)
+function handleCrudSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('appFormId').value;
+    const title = document.getElementById('formTitle').value.trim();
+    const category = document.getElementById('formCategory').value;
+    const version = document.getElementById('formVersion').value.trim();
+    const description = document.getElementById('formDescription').value.trim();
+    const downloadUrl = document.getElementById('formDownloadUrl').value.trim();
+    const iconClass = document.getElementById('formIconClass').value.trim() || 'fa-solid fa-cube';
+
+    if (id) {
+        // Update
+        const index = appsData.findIndex(a => a.id === id);
+        if (index !== -1) {
+            appsData[index] = { id, title, category, version, description, downloadUrl, iconClass };
+            showToastVIP("Đã cập nhật thông tin phần mềm!");
+        }
+    } else {
+        // Create
+        const newApp = {
+            id: 'app-' + Date.now(),
+            title, category, version, description, downloadUrl, iconClass
+        };
+        appsData.push(newApp);
+        showToastVIP("Đã thêm phần mềm mới vào danh sách!");
+    }
+
+    saveAndSync();
+    closeAppFormModal();
+}
+
+function saveAndSync() {
+    localStorage.setItem('appstore_apps', JSON.stringify(appsData));
+    renderAdminTable();
+}
+
+// Toast
 function showToastVIP(msg) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -157,24 +214,4 @@ function showToastVIP(msg) {
     toast.innerHTML = `<i class="fa-solid fa-bolt" style="color:#06b6d4"></i> ${msg}`;
     container.appendChild(toast);
     setTimeout(() => toast.remove(), 3500);
-}
-
-// GitHub Releases API Sync
-async function initGitHubReleases() {
-    const githubCards = document.querySelectorAll('.app-card-vip[data-github-repo]');
-    githubCards.forEach(async (card) => {
-        const repo = card.getAttribute('data-github-repo');
-        try {
-            const res = await fetch(`https://api.github.com/repos/${repo}/releases/latest`);
-            if (!res.ok) return;
-            const data = await res.json();
-            const asset = data.assets?.[0];
-            if (asset) {
-                card.querySelector('.version').textContent = `${data.tag_name} • ${(asset.size / (1024*1024)).toFixed(1)} MB`;
-                card.querySelector('.btn-github').href = asset.browser_download_url;
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    });
 }
