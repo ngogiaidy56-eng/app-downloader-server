@@ -17,9 +17,16 @@
                 <i class="fa-solid fa-download logo-icon"></i>
                 <span>AppStore Hub</span>
             </div>
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="text" id="searchInput" placeholder="Tìm kiếm phần mềm, ứng dụng...">
+            
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm phần mềm, ứng dụng...">
+                </div>
+                <!-- Nút chuyển đổi Dark Mode -->
+                <button id="themeToggle" class="theme-toggle-btn" title="Chuyển chế độ tối/sáng">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
             </div>
         </div>
     </header>
@@ -29,6 +36,22 @@
         <section class="banner">
             <h2>Tải Phần Mềm Miễn Phí & An Toàn</h2>
             <p>Tự động cập nhật phiên bản mới nhất trực tiếp từ GitHub Releases.</p>
+
+            <!-- Thanh thống kê hệ thống (MỚI) -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <i class="fa-solid fa-cubes"></i>
+                    <span id="totalAppsCount">0</span> Ứng dụng
+                </div>
+                <div class="stat-item">
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+                    <span id="totalDownloadsCount">--</span> Lượt tải
+                </div>
+                <div class="stat-item">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>100%</span> An toàn
+                </div>
+            </div>
             
             <!-- Bộ lọc danh mục -->
             <div class="filter-tabs">
@@ -42,8 +65,13 @@
         <!-- Danh sách thẻ phần mềm -->
         <section class="app-grid" id="appGrid">
 
-            <!-- Card 1: Tự động đồng bộ với GitHub Release qua API -->
-            <div class="app-card" data-category="Windows" data-github-repo="username/repository-name">
+            <!-- Card 1: Windows OCR Utility -->
+            <div class="app-card" 
+                 data-category="Windows" 
+                 data-github-repo="username/repository-name"
+                 data-changelog="• Sửa lỗi nhận diện font chữ tiếng Việt\n• Cải thiện tốc độ chụp màn hình OCR\n• Thêm phím tắt Ctrl+Shift+S"
+                 data-requirements="Windows 10/11 (64-bit), RAM 4GB"
+                 data-screenshots="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600">
                 <div class="app-badge windows">Windows</div>
                 <div class="app-info">
                     <div class="app-icon windows-bg">
@@ -57,14 +85,19 @@
                 </div>
                 <div class="app-meta">
                     <span class="downloads-count"><i class="fa-solid fa-chart-line"></i> -- lượt tải</span>
+                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
                 </div>
                 <a href="#" class="btn-download btn-github" target="_blank" rel="noopener">
                     <i class="fa-solid fa-download"></i> Tải .EXE
                 </a>
             </div>
 
-            <!-- Card 2: Link tĩnh nội bộ (File lưu trong thư mục downloads/) -->
-            <div class="app-card" data-category="Android">
+            <!-- Card 2: Telegram Mini App -->
+            <div class="app-card" 
+                 data-category="Android"
+                 data-changelog="• Thêm giao diện người dùng mới\n• Tích hợp hệ thống thông báo Push\n• Tối ưu dung lượng pin"
+                 data-requirements="Android 7.0 trở lên"
+                 data-screenshots="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600">
                 <div class="app-badge android">Android</div>
                 <div class="app-info">
                     <div class="app-icon android-bg">
@@ -78,14 +111,19 @@
                 </div>
                 <div class="app-meta">
                     <span class="downloads-count"><i class="fa-solid fa-check"></i> Trực tiếp</span>
+                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
                 </div>
                 <a href="downloads/telegram-app.apk" class="btn-download" download>
                     <i class="fa-solid fa-download"></i> Tải APK
                 </a>
             </div>
 
-            <!-- Card 3: Link ngoài (Google Drive / Cloud) -->
-            <div class="app-card" data-category="Tools">
+            <!-- Card 3: AI Subtitle Studio -->
+            <div class="app-card" 
+                 data-category="Tools"
+                 data-changelog="• Hỗ trợ mô hình AI Whisper Large-v3\n• Tự động dịch sang 50+ ngôn ngữ với Gemini AI\n• Xuất định dạng SRT, VTT, ASS"
+                 data-requirements="Windows / macOS, Card đồ họa NVIDIA khuyến nghị"
+                 data-screenshots="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600">
                 <div class="app-badge tools">Multi-Platform</div>
                 <div class="app-info">
                     <div class="app-icon tools-bg">
@@ -99,6 +137,7 @@
                 </div>
                 <div class="app-meta">
                     <span class="downloads-count"><i class="fa-solid fa-cloud"></i> Cloud Storage</span>
+                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
                 </div>
                 <a href="https://drive.google.com" target="_blank" rel="noopener" class="btn-download external">
                     <i class="fa-solid fa-cloud-arrow-down"></i> Tải từ Cloud
@@ -113,6 +152,43 @@
             <p>Không tìm thấy phần mềm phù hợp.</p>
         </div>
     </main>
+
+    <!-- Modal Xem Chi Tiết Ứng Dụng (MỚI) -->
+    <div id="appModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-header">
+                <div id="modalIcon" class="app-icon"></div>
+                <div>
+                    <h2 id="modalTitle">Tên ứng dụng</h2>
+                    <p id="modalVersion" class="version">Phiên bản: --</p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h4><i class="fa-solid fa-align-left"></i> Mô tả</h4>
+                    <p id="modalDescription">Mô tả chi tiết...</p>
+                </div>
+                <div class="modal-section">
+                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký cập nhật (Changelog)</h4>
+                    <pre id="modalChangelog">Nội dung cập nhật...</pre>
+                </div>
+                <div class="modal-section">
+                    <h4><i class="fa-solid fa-laptop"></i> Yêu cầu hệ thống</h4>
+                    <p id="modalRequirements">Chưa có thông tin</p>
+                </div>
+                <div class="modal-section" id="screenshotSection">
+                    <h4><i class="fa-solid fa-image"></i> Hình ảnh ứng dụng</h4>
+                    <img id="modalScreenshot" src="" alt="Screenshot" class="modal-img">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" id="modalDownloadBtn" class="btn-download" target="_blank">
+                    <i class="fa-solid fa-download"></i> Tải Ngay
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
