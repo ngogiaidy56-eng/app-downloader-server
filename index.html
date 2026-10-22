@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kho Phần Mềm & Ứng Dụng</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome cho Icons -->
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- Header & Thanh Tìm Kiếm -->
+    <!-- Header & Tìm kiếm -->
     <header class="header">
         <div class="header-container">
             <div class="logo">
@@ -24,18 +24,47 @@
         </div>
     </header>
 
-    <!-- Nội dung chính -->
+    <!-- Main Content -->
     <main class="main-content">
         <section class="banner">
             <h2>Tải Phần Mềm Miễn Phí & An Toàn</h2>
-            <p>Tổng hợp các ứng dụng Android, Windows và công cụ tiện ích mới nhất.</p>
+            <p>Tự động cập nhật phiên bản mới nhất trực tiếp từ GitHub Releases.</p>
+            
+            <!-- Bộ lọc danh mục -->
+            <div class="filter-tabs">
+                <button class="filter-btn active" data-filter="all">Tất cả</button>
+                <button class="filter-btn" data-filter="Android">Android</button>
+                <button class="filter-btn" data-filter="Windows">Windows</button>
+                <button class="filter-btn" data-filter="Tools">Công cụ</button>
+            </div>
         </section>
 
-        <!-- Danh sách thẻ ứng dụng -->
+        <!-- Danh sách thẻ phần mềm -->
         <section class="app-grid" id="appGrid">
 
-            <!-- Card 1: Android App -->
-            <div class="app-card" data-title="telegram app messaging" data-category="Android">
+            <!-- Card 1: Tự động đồng bộ với GitHub Release qua API -->
+            <div class="app-card" data-category="Windows" data-github-repo="username/repository-name">
+                <div class="app-badge windows">Windows</div>
+                <div class="app-info">
+                    <div class="app-icon windows-bg">
+                        <i class="fa-solid fa-display"></i>
+                    </div>
+                    <div class="app-details">
+                        <h3>Screen OCR Utility</h3>
+                        <p class="version"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin...</p>
+                        <p class="description">Công cụ quét màn hình và nhận diện văn bản qua OCR.</p>
+                    </div>
+                </div>
+                <div class="app-meta">
+                    <span class="downloads-count"><i class="fa-solid fa-chart-line"></i> -- lượt tải</span>
+                </div>
+                <a href="#" class="btn-download btn-github" target="_blank" rel="noopener">
+                    <i class="fa-solid fa-download"></i> Tải .EXE
+                </a>
+            </div>
+
+            <!-- Card 2: Link tĩnh nội bộ (File lưu trong thư mục downloads/) -->
+            <div class="app-card" data-category="Android">
                 <div class="app-badge android">Android</div>
                 <div class="app-info">
                     <div class="app-icon android-bg">
@@ -47,32 +76,16 @@
                         <p class="description">Ứng dụng nhắn tin bảo mật và hỗ trợ Bot tự động hóa.</p>
                     </div>
                 </div>
-                <!-- Link tải trực tiếp từ thư mục local hoặc Cloud -->
+                <div class="app-meta">
+                    <span class="downloads-count"><i class="fa-solid fa-check"></i> Trực tiếp</span>
+                </div>
                 <a href="downloads/telegram-app.apk" class="btn-download" download>
                     <i class="fa-solid fa-download"></i> Tải APK
                 </a>
             </div>
 
-            <!-- Card 2: Windows Tool -->
-            <div class="app-card" data-title="screen ocr scanner windows" data-category="Windows">
-                <div class="app-badge windows">Windows</div>
-                <div class="app-info">
-                    <div class="app-icon windows-bg">
-                        <i class="fa-solid fa-display"></i>
-                    </div>
-                    <div class="app-details">
-                        <h3>Screen OCR Utility</h3>
-                        <p class="version">Phiên bản: v1.0.5 • 45 MB</p>
-                        <p class="description">Công cụ quét màn hình và nhận diện văn bản qua OCR.</p>
-                    </div>
-                </div>
-                <a href="downloads/screen-ocr-setup.exe" class="btn-download" download>
-                    <i class="fa-solid fa-download"></i> Tải .EXE
-                </a>
-            </div>
-
-            <!-- Card 3: Link tải qua Cloud (File dung lượng lớn) -->
-            <div class="app-card" data-title="video subtitle editor tools" data-category="Cross-platform">
+            <!-- Card 3: Link ngoài (Google Drive / Cloud) -->
+            <div class="app-card" data-category="Tools">
                 <div class="app-badge tools">Multi-Platform</div>
                 <div class="app-info">
                     <div class="app-icon tools-bg">
@@ -81,27 +94,29 @@
                     <div class="app-details">
                         <h3>AI Subtitle Studio</h3>
                         <p class="version">Phiên bản: v3.1.0 • 350 MB</p>
-                        <p class="description">Phần mềm tạo và dịch phụ đề tự động sử dụng AI Whisper.</p>
+                        <p class="description">Tạo và dịch phụ đề tự động bằng Whisper & Gemini AI.</p>
                     </div>
                 </div>
-                <!-- Dùng đường link Cloud khi file vượt quá giới hạn 100MB của GitHub -->
-                <a href="https://drive.google.com/uc?export=download&id=YOUR_FILE_ID" target="_blank" rel="noopener" class="btn-download external">
+                <div class="app-meta">
+                    <span class="downloads-count"><i class="fa-solid fa-cloud"></i> Cloud Storage</span>
+                </div>
+                <a href="https://drive.google.com" target="_blank" rel="noopener" class="btn-download external">
                     <i class="fa-solid fa-cloud-arrow-down"></i> Tải từ Cloud
                 </a>
             </div>
 
         </section>
 
-        <!-- Thông báo khi không tìm thấy kết quả -->
+        <!-- Trạng thái không tìm thấy -->
         <div id="noResults" class="no-results hidden">
             <i class="fa-solid fa-circle-exclamation"></i>
-            <p>Không tìm thấy phần mềm phù hợp với từ khóa.</p>
+            <p>Không tìm thấy phần mềm phù hợp.</p>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2026 AppStore Hub. Được lưu trữ hoàn toàn miễn phí trên GitHub Pages.</p>
+        <p>&copy; 2026 AppStore Hub. Tối ưu hóa và lưu trữ miễn phí trên GitHub Pages.</p>
     </footer>
 
     <script src="script.js"></script>
