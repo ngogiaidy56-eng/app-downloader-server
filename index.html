@@ -3,29 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Phần Mềm & Ứng Dụng</title>
+    <title>AppStore VIP PRO - Kho Phần Mềm Thượng Hạng</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
+<body class="dark-vip">
 
-    <!-- Header & Tìm kiếm -->
-    <header class="header">
+    <!-- Glowing Background Overlay -->
+    <div class="glow-bg"></div>
+
+    <!-- Header VIP -->
+    <header class="header-vip">
         <div class="header-container">
-            <div class="logo">
-                <i class="fa-solid fa-download logo-icon"></i>
-                <span>AppStore Hub</span>
+            <div class="logo-vip">
+                <i class="fa-solid fa-crown crown-icon"></i>
+                <span class="logo-text">AppStore <span class="badge-pro">VIP PRO</span></span>
             </div>
             
-            <div class="header-actions">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm phần mềm, ứng dụng...">
+            <div class="search-vip">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm siêu tốc ứng dụng, game, công cụ...">
+            </div>
+
+            <!-- VIP User & Points Stats -->
+            <div class="user-vip-status">
+                <div class="vip-points" title="Điểm thưởng VIP">
+                    <i class="fa-solid fa-gem gem-icon"></i>
+                    <span id="userPoints">1,250</span> PTS
                 </div>
-                <!-- Nút chuyển đổi Dark Mode -->
-                <button id="themeToggle" class="theme-toggle-btn" title="Chuyển chế độ tối/sáng">
-                    <i class="fa-solid fa-moon"></i>
+                <button class="btn-vip-upgrade" onclick="triggerVipEffect()">
+                    <i class="fa-solid fa-bolt"></i> Tải Siêu Tốc
                 </button>
             </div>
         </div>
@@ -33,167 +40,194 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <section class="banner">
-            <h2>Tải Phần Mềm Miễn Phí & An Toàn</h2>
-            <p>Tự động cập nhật phiên bản mới nhất trực tiếp từ GitHub Releases.</p>
-
-            <!-- Thanh thống kê hệ thống (MỚI) -->
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <i class="fa-solid fa-cubes"></i>
-                    <span id="totalAppsCount">0</span> Ứng dụng
-                </div>
-                <div class="stat-item">
-                    <i class="fa-solid fa-cloud-arrow-down"></i>
-                    <span id="totalDownloadsCount">--</span> Lượt tải
-                </div>
-                <div class="stat-item">
-                    <i class="fa-solid fa-shield-halved"></i>
-                    <span>100%</span> An toàn
-                </div>
+        <!-- Hero VIP Banner -->
+        <section class="hero-vip">
+            <div class="hero-content">
+                <span class="hero-tag"><i class="fa-solid fa-fire"></i> EXCLUSIVE PLATFORM</span>
+                <h2>KHO PHẦN MỀM THƯỢNG HẠNG & TỰ ĐỘNG HÓA</h2>
+                <p>Tải phần mềm tốc độ cực đại, mở khóa đặc quyền VIP hoàn toàn miễn phí.</p>
             </div>
-            
-            <!-- Bộ lọc danh mục -->
-            <div class="filter-tabs">
-                <button class="filter-btn active" data-filter="all">Tất cả</button>
-                <button class="filter-btn" data-filter="Android">Android</button>
-                <button class="filter-btn" data-filter="Windows">Windows</button>
-                <button class="filter-btn" data-filter="Tools">Công cụ</button>
+
+            <!-- Controls & Multi-Select Action -->
+            <div class="controls-vip">
+                <div class="filter-tags">
+                    <button class="tag-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i> Tất cả</button>
+                    <button class="tag-btn" data-filter="Windows"><i class="fa-brands fa-windows"></i> Windows</button>
+                    <button class="tag-btn" data-filter="Android"><i class="fa-brands fa-android"></i> Android</button>
+                    <button class="tag-btn" data-filter="Tools"><i class="fa-solid fa-screwdriver-wrench"></i> Tool AI / Automation</button>
+                </div>
+
+                <div class="batch-download-box">
+                    <button id="btnBatchDownload" class="btn-batch disabled">
+                        <i class="fa-solid fa-layer-group"></i> Tải các app đã chọn (<span id="selectedCount">0</span>)
+                    </button>
+                </div>
             </div>
         </section>
 
-        <!-- Danh sách thẻ phần mềm -->
+        <!-- App Grid (Glassmorphism Cards) -->
         <section class="app-grid" id="appGrid">
 
-            <!-- Card 1: Windows OCR Utility -->
-            <div class="app-card" 
-                 data-category="Windows" 
+            <!-- Card 1: Tool Automation (VIP Dynamic) -->
+            <div class="app-card-vip" 
+                 data-id="app-1" 
+                 data-category="Tools" 
+                 data-vip="true"
+                 data-downloads="5200" 
+                 data-rating="5.0"
                  data-github-repo="username/repository-name"
-                 data-changelog="• Sửa lỗi nhận diện font chữ tiếng Việt\n• Cải thiện tốc độ chụp màn hình OCR\n• Thêm phím tắt Ctrl+Shift+S"
-                 data-requirements="Windows 10/11 (64-bit), RAM 4GB"
-                 data-screenshots="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600">
-                <div class="app-badge windows">Windows</div>
-                <div class="app-info">
-                    <div class="app-icon windows-bg">
-                        <i class="fa-solid fa-display"></i>
+                 data-changelog="Tối ưu Engine tự động hóa; Thêm API hỗ trợ OCR tốc độ siêu việt."
+                 data-screens="https://picsum.photos/800/450?random=10,https://picsum.photos/800/450?random=11">
+                
+                <div class="card-select">
+                    <input type="checkbox" class="app-checkbox" data-app-id="app-1">
+                </div>
+
+                <div class="vip-ribbon"><i class="fa-solid fa-crown"></i> VIP EXCLUSIVE</div>
+
+                <div class="app-info-vip">
+                    <div class="app-icon-vip tools-glow">
+                        <i class="fa-solid fa-robot"></i>
                     </div>
-                    <div class="app-details">
-                        <h3>Screen OCR Utility</h3>
-                        <p class="version"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải thông tin...</p>
-                        <p class="description">Công cụ quét màn hình và nhận diện văn bản qua OCR.</p>
+                    <div class="app-details-vip">
+                        <h3>Automation Workflows Hub</h3>
+                        <p class="version"><i class="fa-solid fa-spinner fa-spin"></i> Đang kết nối GitHub...</p>
+                        <p class="description">Hệ thống quản lý kịch bản tự động hóa, nuôi tài khoản và Reg Webhook.</p>
                     </div>
                 </div>
-                <div class="app-meta">
-                    <span class="downloads-count"><i class="fa-solid fa-chart-line"></i> -- lượt tải</span>
-                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
+
+                <div class="card-stats-vip">
+                    <span><i class="fa-solid fa-star text-gold"></i> 5.0 (280 reviews)</span>
+                    <span class="speed-tag"><i class="fa-solid fa-gauge-high"></i> Tải 100MB/s</span>
                 </div>
-                <a href="#" class="btn-download btn-github" target="_blank" rel="noopener">
-                    <i class="fa-solid fa-download"></i> Tải .EXE
-                </a>
+
+                <div class="card-actions-vip">
+                    <button class="btn-glass" onclick="openModal('app-1')"><i class="fa-solid fa-eye"></i> Xem Demo</button>
+                    <a href="#" class="btn-download-vip btn-github" target="_blank">
+                        <i class="fa-solid fa-download"></i> Tải VIP (.EXE)
+                    </a>
+                </div>
             </div>
 
-            <!-- Card 2: Telegram Mini App -->
-            <div class="app-card" 
-                 data-category="Android"
-                 data-changelog="• Thêm giao diện người dùng mới\n• Tích hợp hệ thống thông báo Push\n• Tối ưu dung lượng pin"
-                 data-requirements="Android 7.0 trở lên"
-                 data-screenshots="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600">
-                <div class="app-badge android">Android</div>
-                <div class="app-info">
-                    <div class="app-icon android-bg">
-                        <i class="fa-brands fa-telegram"></i>
-                    </div>
-                    <div class="app-details">
-                        <h3>Telegram Mini App</h3>
-                        <p class="version">Phiên bản: v2.4.0 • 28 MB</p>
-                        <p class="description">Ứng dụng nhắn tin bảo mật và hỗ trợ Bot tự động hóa.</p>
-                    </div>
+            <!-- Card 2: AI Subtitle -->
+            <div class="app-card-vip" 
+                 data-id="app-2" 
+                 data-category="Tools" 
+                 data-vip="true"
+                 data-downloads="8900" 
+                 data-rating="4.9"
+                 data-changelog="Tích hợp Whisper Large-v3 & AI Gemini 1.5 Dịch thuật tự động."
+                 data-screens="https://picsum.photos/800/450?random=12">
+                
+                <div class="card-select">
+                    <input type="checkbox" class="app-checkbox" data-app-id="app-2">
                 </div>
-                <div class="app-meta">
-                    <span class="downloads-count"><i class="fa-solid fa-check"></i> Trực tiếp</span>
-                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
-                </div>
-                <a href="downloads/telegram-app.apk" class="btn-download" download>
-                    <i class="fa-solid fa-download"></i> Tải APK
-                </a>
-            </div>
 
-            <!-- Card 3: AI Subtitle Studio -->
-            <div class="app-card" 
-                 data-category="Tools"
-                 data-changelog="• Hỗ trợ mô hình AI Whisper Large-v3\n• Tự động dịch sang 50+ ngôn ngữ với Gemini AI\n• Xuất định dạng SRT, VTT, ASS"
-                 data-requirements="Windows / macOS, Card đồ họa NVIDIA khuyến nghị"
-                 data-screenshots="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600">
-                <div class="app-badge tools">Multi-Platform</div>
-                <div class="app-info">
-                    <div class="app-icon tools-bg">
+                <div class="app-info-vip">
+                    <div class="app-icon-vip ai-glow">
                         <i class="fa-solid fa-closed-captioning"></i>
                     </div>
-                    <div class="app-details">
-                        <h3>AI Subtitle Studio</h3>
-                        <p class="version">Phiên bản: v3.1.0 • 350 MB</p>
-                        <p class="description">Tạo và dịch phụ đề tự động bằng Whisper & Gemini AI.</p>
+                    <div class="app-details-vip">
+                        <h3>AI Subtitle & Translator Studio</h3>
+                        <p class="version">v3.5.0 PRO • 320 MB</p>
+                        <p class="description">Trích xuất âm thanh, tạo phụ đề tự động bằng AI và render SubtitlesOctopus WASM.</p>
                     </div>
                 </div>
-                <div class="app-meta">
-                    <span class="downloads-count"><i class="fa-solid fa-cloud"></i> Cloud Storage</span>
-                    <button class="btn-detail-view"><i class="fa-solid fa-circle-info"></i> Chi tiết</button>
+
+                <div class="card-stats-vip">
+                    <span><i class="fa-solid fa-star text-gold"></i> 4.9 (410 reviews)</span>
+                    <span class="speed-tag"><i class="fa-solid fa-cloud"></i> Cloud CDN</span>
                 </div>
-                <a href="https://drive.google.com" target="_blank" rel="noopener" class="btn-download external">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Tải từ Cloud
-                </a>
+
+                <div class="card-actions-vip">
+                    <button class="btn-glass" onclick="openModal('app-2')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    <a href="https://drive.google.com" target="_blank" class="btn-download-vip cloud-btn">
+                        <i class="fa-solid fa-bolt"></i> Tải Tốc Độ Cao
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card 3: Android App -->
+            <div class="app-card-vip" 
+                 data-id="app-3" 
+                 data-category="Android" 
+                 data-vip="false"
+                 data-downloads="15400" 
+                 data-rating="4.8"
+                 data-changelog="Hỗ trợ Telegram Mini App Webhook & Cloudflare D1."
+                 data-screens="https://picsum.photos/800/450?random=13">
+                
+                <div class="card-select">
+                    <input type="checkbox" class="app-checkbox" data-app-id="app-3">
+                </div>
+
+                <div class="app-info-vip">
+                    <div class="app-icon-vip android-glow">
+                        <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div class="app-details-vip">
+                        <h3>Telegram Bot & Mini App Manager</h3>
+                        <p class="version">v2.8.1 • 45 MB</p>
+                        <p class="description">Quản lý Bot Telegram, Webhook và điều khiển VPS trực tiếp trên Android.</p>
+                    </div>
+                </div>
+
+                <div class="card-stats-vip">
+                    <span><i class="fa-solid fa-star text-gold"></i> 4.8 (920 reviews)</span>
+                    <span class="speed-tag"><i class="fa-solid fa-shield-halved"></i> Đã kiểm duyệt</span>
+                </div>
+
+                <div class="card-actions-vip">
+                    <button class="btn-glass" onclick="openModal('app-3')"><i class="fa-solid fa-eye"></i> Chi tiết</button>
+                    <a href="downloads/telegram-app.apk" class="btn-download-vip" download>
+                        <i class="fa-solid fa-download"></i> Tải APK
+                    </a>
+                </div>
             </div>
 
         </section>
-
-        <!-- Trạng thái không tìm thấy -->
-        <div id="noResults" class="no-results hidden">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <p>Không tìm thấy phần mềm phù hợp.</p>
-        </div>
     </main>
 
-    <!-- Modal Xem Chi Tiết Ứng Dụng (MỚI) -->
+    <!-- Modal Xem Chi Tiết Phong Cách Cyber/Glassmorphism -->
     <div id="appModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">&times;</button>
-            <div class="modal-header">
-                <div id="modalIcon" class="app-icon"></div>
+        <div class="modal-content-vip">
+            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header-vip">
+                <div id="modalIcon" class="app-icon-vip"></div>
                 <div>
-                    <h2 id="modalTitle">Tên ứng dụng</h2>
-                    <p id="modalVersion" class="version">Phiên bản: --</p>
+                    <h2 id="modalTitle">Tên Phần Mềm</h2>
+                    <p id="modalVersion" class="version">Phiên bản</p>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="modal-section">
-                    <h4><i class="fa-solid fa-align-left"></i> Mô tả</h4>
-                    <p id="modalDescription">Mô tả chi tiết...</p>
-                </div>
-                <div class="modal-section">
-                    <h4><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký cập nhật (Changelog)</h4>
-                    <pre id="modalChangelog">Nội dung cập nhật...</pre>
-                </div>
-                <div class="modal-section">
-                    <h4><i class="fa-solid fa-laptop"></i> Yêu cầu hệ thống</h4>
-                    <p id="modalRequirements">Chưa có thông tin</p>
-                </div>
-                <div class="modal-section" id="screenshotSection">
-                    <h4><i class="fa-solid fa-image"></i> Hình ảnh ứng dụng</h4>
-                    <img id="modalScreenshot" src="" alt="Screenshot" class="modal-img">
+            <div class="modal-body-vip">
+                <h4><i class="fa-solid fa-photo-film"></i> Giao Diện Xem Trước</h4>
+                <div id="modalScreenshots" class="screenshot-gallery-vip"></div>
+
+                <h4><i class="fa-solid fa-square-rss"></i> Ghi Chú Phát Hành</h4>
+                <p id="modalChangelog" class="changelog-box-vip"></p>
+
+                <!-- TÍNH NĂNG MỚI: Khung Bình Luận Trực Tiếp -->
+                <h4><i class="fa-solid fa-comments"></i> Thảo Luận Cộng Đồng</h4>
+                <div class="comments-section">
+                    <div class="comment-input-box">
+                        <input type="text" id="commentInput" placeholder="Viết đánh giá của bạn...">
+                        <button onclick="postComment()"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
+                    </div>
+                    <div id="commentsList" class="comments-list">
+                        <div class="comment-item">
+                            <strong><i class="fa-solid fa-user-shield text-gold"></i> Dev_Pro9x:</strong> Tool chạy siêu mượt trên Windows Server!
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <a href="#" id="modalDownloadBtn" class="btn-download" target="_blank">
-                    <i class="fa-solid fa-download"></i> Tải Ngay
-                </a>
+            <div class="modal-footer-vip">
+                <a id="modalDownloadBtn" href="#" class="btn-download-vip w-100" download>TẢI VỀ NGAY (FREE SPEED)</a>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2026 AppStore Hub. Tối ưu hóa và lưu trữ miễn phí trên GitHub Pages.</p>
-    </footer>
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="toast-container-vip"></div>
 
     <script src="script.js"></script>
 </body>
