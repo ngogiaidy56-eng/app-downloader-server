@@ -1,13 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Logic cho Trang Chủ (index.html)
+    // 1. Logic Trang chủ Client
     const appGrid = document.getElementById('appGrid');
     if (appGrid) {
         loadClientApps();
-        
         const searchInput = document.getElementById('searchInput');
         const tagBtns = document.querySelectorAll('.tag-btn');
-        const btnBatchDownload = document.getElementById('btnBatchDownload');
-        let selectedApps = [];
 
         tagBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -40,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Logic cho Admin Dashboard (admin.html)
+    // 2. Logic Admin Developer Panel
     const adminTable = document.getElementById('adminAppTable');
     if (adminTable) {
         let authToken = localStorage.getItem('adminToken');
@@ -68,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('name', document.getElementById('appName').value);
                 formData.append('version', document.getElementById('appVersion').value);
                 formData.append('category', document.getElementById('appCategory').value);
-                formData.append('rating', document.getElementById('appRating').value);
+                formData.append('channel', document.getElementById('appChannel').value);
                 formData.append('description', document.getElementById('appDescription').value);
                 formData.append('changelog', document.getElementById('appChangelog').value);
                 formData.append('softwareFile', fileInput.files[0]);
@@ -77,9 +74,56 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await fetch('/api/admin/upload', { method: 'POST', body: formData });
                 const data = await res.json();
                 if (data.success) {
-                    showToastVIP('Tải lên thành công!');
+                    showToastVIP('Phát hành Build mới thành công!');
                     uploadForm.reset();
                     document.getElementById('selectedFileName').textContent = '';
+                    loadAdminApps();
+                } else {
+                    alert(data.message);
+                }
+            });
+        }
+
+        // Search nhanh trong bảng Admin
+        const adminSearchInput = document.getElementById('adminSearchInput');
+        if (adminSearchInput) {
+            adminSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                document.querySelectorAll('#adminAppTable tr').forEach(tr => {
+                    const text = tr.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        tr.classList.remove('hidden');
+                    } else {
+                        tr.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // Form Edit thông tin App
+        const editForm = document.getElementById('editForm');
+        if (editForm) {
+            editForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('editAppId').value;
+                const bodyData = {
+                    name: document.getElementById('editName').value,
+                    version: document.getElementById('editVersion').value,
+                    category: document.getElementById('editCategory').value,
+                    channel: document.getElementById('editChannel').value,
+                    description: document.getElementById('editDescription').value,
+                    changelog: document.getElementById('editChangelog').value
+                };
+
+                const res = await fetch(`/api/admin/apps/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToastVIP('Lưu cập nhật thành công!');
+                    closeEditModal();
                     loadAdminApps();
                 } else {
                     alert(data.message);
@@ -89,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Tải danh sách app cho Trang Chủ
+// Load Client Apps
 async function loadClientApps() {
     const res = await fetch('/api/apps');
     const apps = await res.json();
@@ -102,12 +146,11 @@ async function loadClientApps() {
         card.dataset.id = app.id;
         card.dataset.category = app.category;
         card.innerHTML = `
-            <div class="card-select"><input type="checkbox" class="app-checkbox" data-app-id="${app.id}"></div>
             <div class="app-info-vip">
                 <div class="app-icon-vip tools-glow"><i class="fa-solid fa-rocket"></i></div>
                 <div class="app-details-vip">
                     <h3>${app.name}</h3>
-                    <p class="version">${app.version} • ${app.size}</p>
+                    <p class="version">${app.version} • ${app.size} <span class="badge-pro" style="font-size:0.65rem; padding:0.1rem 0.4rem;">${(app.channel || 'stable').toUpperCase()}</span></p>
                     <p class="description">${app.description}</p>
                 </div>
             </div>
@@ -126,33 +169,63 @@ async function loadClientApps() {
     });
 }
 
-// Tải danh sách app cho Admin Panel
+// Load Admin Apps & Build Statistics
 async function loadAdminApps() {
     const res = await fetch('/api/apps');
     const apps = await res.json();
-    let totalDownloads = 0, totalMB = 0;
+    let totalDownloads = 0;
     const tbody = document.getElementById('adminAppTable');
     tbody.innerHTML = '';
 
     apps.forEach(app => {
         totalDownloads += app.downloads || 0;
-        totalMB += parseFloat(app.size) || 0;
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><strong>${app.name}</strong></td>
             <td><span class="version">${app.version}</span></td>
-            <td><span class="badge-pro">${app.category}</span></td>
+            <td><span class="badge-pro" style="background:${app.channel === 'beta' ? '#f59e0b' : '#10b981'}; color:#000;">${(app.channel || 'stable').toUpperCase()}</span></td>
+            <td>${app.category}</td>
             <td>${app.size}</td>
             <td><i class="fa-solid fa-download text-cyan"></i> ${app.downloads}</td>
-            <td><code>uploads/${app.filename}</code></td>
-            <td><button onclick="deleteApp('${app.id}')" class="btn-delete"><i class="fa-solid fa-trash"></i> Xóa</button></td>
+            <td>
+                <div class="btn-actions-group">
+                    <button onclick="openEditModal('${app.id}')" class="btn-edit"><i class="fa-solid fa-pen"></i> Sửa</button>
+                    <button onclick="deleteApp('${app.id}')" class="btn-delete"><i class="fa-solid fa-trash"></i> Xóa</button>
+                </div>
+            </td>
         `;
         tbody.appendChild(tr);
     });
 
     document.getElementById('statTotalApps').textContent = apps.length;
-    document.getElementById('statTotalDownloads').textContent = totalDownloads.toLocaleString();
-    document.getElementById('statTotalStorage').textContent = totalMB.toFixed(1) + ' MB';
+}
+
+// Admin Tab Switching
+function switchDevTab(tabId, btn) {
+    document.querySelectorAll('.dev-tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.querySelectorAll('.filter-tags .tag-btn').forEach(b => b.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.remove('hidden');
+    btn.classList.add('active');
+}
+
+// License Key Generator
+function generateLicenseKey() {
+    const client = document.getElementById('licenseClientName').value.trim() || 'Tester';
+    const duration = document.getElementById('licenseDuration').value;
+    const key = 'KEY-' + Math.random().toString(36).substring(2, 10).toUpperCase() + '-' + Date.now().toString().slice(-4);
+
+    const tbody = document.getElementById('licenseTableBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><code>${key}</code></td>
+        <td>${client}</td>
+        <td>${duration === '9999' ? 'Vĩnh Viễn' : duration + ' Ngày'}</td>
+        <td><code>Chưa Bind HWID</code></td>
+        <td><span class="badge-pro" style="background:#10b981; color:#000;">SẴN SÀNG</span></td>
+    `;
+    tbody.prepend(tr);
+    showToastVIP(`Đã khởi tạo License Key mới!`);
 }
 
 async function loginAdmin() {
@@ -179,13 +252,34 @@ function logoutAdmin() {
 }
 
 async function deleteApp(id) {
-    if (!confirm('Bạn có chắc chắn muốn xóa phần mềm này?')) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa phần mềm này khỏi Server?')) return;
     const res = await fetch(`/api/admin/apps/${id}`, { method: 'DELETE' });
     const data = await res.json();
     if (data.success) {
         showToastVIP('Đã xóa thành công!');
         loadAdminApps();
     }
+}
+
+async function openEditModal(appId) {
+    const res = await fetch('/api/apps');
+    const apps = await res.json();
+    const app = apps.find(a => a.id === appId);
+    if (!app) return;
+
+    document.getElementById('editAppId').value = app.id;
+    document.getElementById('editName').value = app.name;
+    document.getElementById('editVersion').value = app.version;
+    document.getElementById('editCategory').value = app.category;
+    document.getElementById('editChannel').value = app.channel || 'stable';
+    document.getElementById('editDescription').value = app.description || '';
+    document.getElementById('editChangelog').value = app.changelog || '';
+
+    document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
 }
 
 async function openModal(appId) {
@@ -215,7 +309,7 @@ function postComment() {
     item.innerHTML = `<strong><i class="fa-solid fa-crown text-gold"></i> Thành viên:</strong> ${val}`;
     list.prepend(item);
     input.value = '';
-    showToastVIP('Đã gửi bình luận thành công!');
+    showToastVIP('Đã gửi bình luận!');
 }
 
 function showToastVIP(msg) {
