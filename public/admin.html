@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard VIP PRO</title>
+    <title>Admin Developer Portal VIP PRO</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -13,7 +13,7 @@
 
     <div id="loginOverlay" class="modal-overlay">
         <div class="modal-content-vip" style="max-width: 400px; text-align: center;">
-            <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-lock text-gold"></i> Admin VIP Login</h2>
+            <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-lock text-gold"></i> Developer Login</h2>
             <input type="password" id="adminPassword" placeholder="Mật khẩu (admin123)..." class="input-vip" style="margin-bottom: 1rem;">
             <button onclick="loginAdmin()" class="btn-download-vip w-100"><i class="fa-solid fa-key"></i> Đăng Nhập</button>
         </div>
@@ -22,8 +22,8 @@
     <header class="header-vip">
         <div class="header-container">
             <div class="logo-vip">
-                <i class="fa-solid fa-user-shield crown-icon"></i>
-                <span class="logo-text">AppStore <span class="badge-pro">ADMIN VIP</span></span>
+                <i class="fa-solid fa-code-branch crown-icon"></i>
+                <span class="logo-text">AppStore <span class="badge-pro">DEV PORTAL</span></span>
             </div>
             <div>
                 <a href="index.html" class="btn-glass" style="text-decoration:none;"><i class="fa-solid fa-globe"></i> Trang Chủ</a>
@@ -33,72 +33,215 @@
     </header>
 
     <main class="main-content">
+        <!-- Thống kê tổng quan Dev -->
         <section class="admin-stats-grid">
             <div class="stat-card">
                 <i class="fa-solid fa-box-archive stat-icon text-cyan"></i>
-                <div><h3 id="statTotalApps">0</h3><p>Tổng phần mềm</p></div>
+                <div><h3 id="statTotalApps">0</h3><p>Ứng dụng phát triển</p></div>
             </div>
             <div class="stat-card">
-                <i class="fa-solid fa-cloud-arrow-down stat-icon text-gold"></i>
-                <div><h3 id="statTotalDownloads">0</h3><p>Tổng lượt tải</p></div>
+                <i class="fa-solid fa-key stat-icon text-gold"></i>
+                <div><h3 id="statActiveLicenses">128</h3><p>License Key hoạt động</p></div>
             </div>
             <div class="stat-card">
-                <i class="fa-solid fa-hard-drive stat-icon text-purple"></i>
-                <div><h3 id="statTotalStorage">0 MB</h3><p>Dung lượng</p></div>
+                <i class="fa-solid fa-bug stat-icon text-purple"></i>
+                <div><h3 id="statCrashReports">3</h3><p>Crash Logs</p></div>
             </div>
         </section>
 
-        <section class="admin-section">
-            <h3><i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Tải Lên Phần Mềm Mới</h3>
-            <form id="uploadForm" class="upload-form-vip">
-                <div class="form-row">
-                    <input type="text" id="appName" placeholder="Tên phần mềm *" required class="input-vip">
-                    <input type="text" id="appVersion" placeholder="Phiên bản (v1.0.0)" required class="input-vip">
+        <!-- Thanh chuyển đổi các Tab Developer -->
+        <div class="filter-tags" style="margin-bottom: 1.5rem;">
+            <button class="tag-btn active" onclick="switchDevTab('releaseTab', this)"><i class="fa-solid fa-upload"></i> Release Pipeline</button>
+            <button class="tag-btn" onclick="switchDevTab('licenseTab', this)"><i class="fa-solid fa-key"></i> License Manager</button>
+            <button class="tag-btn" onclick="switchDevTab('crashTab', this)"><i class="fa-solid fa-bug"></i> Crash Reports</button>
+            <button class="tag-btn" onclick="switchDevTab('apiDocsTab', this)"><i class="fa-solid fa-code"></i> Auto-Update API</button>
+        </div>
+
+        <!-- TAB 1: RELEASE PIPELINE -->
+        <section id="releaseTab" class="dev-tab-content">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Đăng Tải Build Mới</h3>
+                <form id="uploadForm" class="upload-form-vip">
+                    <div class="form-row">
+                        <input type="text" id="appName" placeholder="Tên ứng dụng / Project *" required class="input-vip">
+                        <input type="text" id="appVersion" placeholder="Phiên bản (VD: v1.2.0-beta)" required class="input-vip">
+                    </div>
+                    <div class="form-row">
+                        <select id="appCategory" class="input-vip">
+                            <option value="Windows">Windows (.exe, .zip)</option>
+                            <option value="Android">Android (.apk)</option>
+                            <option value="Tools">Công cụ AI / Tool</option>
+                        </select>
+                        <select id="appChannel" class="input-vip">
+                            <option value="stable">Kênh Stable (Chính thức)</option>
+                            <option value="beta">Kênh Beta (Thử nghiệm)</option>
+                            <option value="nightly">Kênh Nightly / Alpha</option>
+                        </select>
+                    </div>
+                    <textarea id="appDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
+                    <textarea id="appChangelog" placeholder="Release Notes / Git Commit Log..." rows="2" class="input-vip"></textarea>
+
+                    <div class="file-drop-zone" id="dropZone">
+                        <i class="fa-solid fa-file-code drop-icon"></i>
+                        <p>Kéo & thả file Build hoặc <strong>Bấm vào đây để chọn file</strong></p>
+                        <input type="file" id="softwareFile" required hidden>
+                        <span id="selectedFileName" class="selected-file-name"></span>
+                    </div>
+
+                    <button type="submit" class="btn-download-vip w-100" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-rocket"></i> PHÁT HÀNH BUILD LÊN SERVER
+                    </button>
+                </form>
+            </section>
+
+            <section class="admin-section">
+                <div class="admin-table-header">
+                    <h3><i class="fa-solid fa-list-check text-gold"></i> Quản Lý Build Trên Server</h3>
+                    <div class="search-vip" style="max-width: 250px;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="adminSearchInput" placeholder="Tìm kiếm file...">
+                    </div>
                 </div>
-                <div class="form-row">
-                    <select id="appCategory" class="input-vip">
-                        <option value="Windows">Windows (.exe, .zip)</option>
-                        <option value="Android">Android (.apk)</option>
-                        <option value="Tools">Công cụ AI / Tool</option>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ứng Dụng</th>
+                                <th>Version</th>
+                                <th>Kênh</th>
+                                <th>Nền Tảng</th>
+                                <th>Dung Lượng</th>
+                                <th>Lượt Tải</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminAppTable"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 2: QUẢN LÝ LICENSE KEY -->
+        <section id="licenseTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-key text-gold"></i> Tạo Khóa Kích Hoạt (License Key Generator)</h3>
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <input type="text" id="licenseClientName" placeholder="Tên khách hàng / Tester..." class="input-vip">
+                    <select id="licenseDuration" class="input-vip">
+                        <option value="30">30 Ngày (Trial)</option>
+                        <option value="365">1 Năm (VIP)</option>
+                        <option value="9999">Vĩnh Viễn (Lifetime)</option>
                     </select>
-                    <input type="text" id="appRating" placeholder="Đánh giá (5.0)" class="input-vip">
-                </div>
-                <textarea id="appDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
-                <textarea id="appChangelog" placeholder="Changelog..." rows="2" class="input-vip"></textarea>
-
-                <div class="file-drop-zone" id="dropZone">
-                    <i class="fa-solid fa-file-zipper drop-icon"></i>
-                    <p>Kéo & thả file hoặc <strong>Bấm vào đây để chọn file</strong></p>
-                    <input type="file" id="softwareFile" required hidden>
-                    <span id="selectedFileName" class="selected-file-name"></span>
+                    <button type="button" onclick="generateLicenseKey()" class="btn-download-vip"><i class="fa-solid fa-plus"></i> Tạo Key</button>
                 </div>
 
-                <button type="submit" class="btn-download-vip w-100" style="margin-top: 1rem;">
-                    <i class="fa-solid fa-upload"></i> ĐĂNG LÊN SERVER
-                </button>
-            </form>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>License Key</th>
+                                <th>Khách Hàng</th>
+                                <th>Hạn Sử Dụng</th>
+                                <th>Thiết Bị Binding (HWID)</th>
+                                <th>Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenseTableBody">
+                            <tr>
+                                <td><code>PRO-VIP-8F92-K391-9012</code></td>
+                                <td>Dev_Tester_01</td>
+                                <td>Vĩnh Viễn</td>
+                                <td><code>HWID-WINDOWS-SERVER-2026</code></td>
+                                <td><span class="badge-pro" style="background:#10b981; color:#000;">HOẠT ĐỘNG</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </section>
 
-        <section class="admin-section">
-            <h3><i class="fa-solid fa-list-check text-gold"></i> Quản Lý File Trên Server</h3>
-            <div class="table-responsive">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Tên Ứng Dụng</th>
-                            <th>Phiên Bản</th>
-                            <th>Danh Mục</th>
-                            <th>Dung Lượng</th>
-                            <th>Lượt Tải</th>
-                            <th>Đường Dẫn</th>
-                            <th>Thao Tác</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminAppTable"></tbody>
-                </table>
-            </div>
+        <!-- TAB 3: BÁO CÁO LỖI -->
+        <section id="crashTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-bug text-purple"></i> Nhật Ký Lỗi & Crash Logs Từ Client</h3>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>Ứng Dụng</th>
+                                <th>Version</th>
+                                <th>Lỗi / Stack Trace</th>
+                                <th>HĐH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-10-22 18:30</td>
+                                <td>Screen OCR Utility</td>
+                                <td>v1.0.5</td>
+                                <td><code style="color:#ef4444;">NullReferenceException: OpenCV DLL not found in system32</code></td>
+                                <td>Windows 11 x64</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 4: HUỚNG DẪN INTEGRATION -->
+        <section id="apiDocsTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-code text-cyan"></i> Tích Hợp Auto-Update Vào Code App Của Bạn</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1rem;">App Desktop (Python/C#/Node.js/Tauri) gọi API này để tự kiểm tra bản cập nhật mới:</p>
+                
+                <div class="changelog-box-vip">
+                    <strong>GET Endpoint:</strong> <code>/api/check-update?appId=app-demo-1&currentVersion=v1.0.0</code>
+                </div>
+
+                <p style="color: var(--text-dim); margin-top: 1rem;">Mẫu Response JSON trả về cho Client:</p>
+                <pre style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 8px; color: var(--accent-cyan); overflow-x: auto;">
+{
+  "hasUpdate": true,
+  "latestVersion": "v2.8.0",
+  "downloadUrl": "https://domain-cua-ban.com/api/download/app-demo-1",
+  "changelog": "Cập nhật kết nối Webhook Cloudflare Workers D1.",
+  "size": "28.5 MB"
+}
+                </pre>
+            </section>
         </section>
     </main>
+
+    <!-- Modal Chỉnh Sửa Thông Tin App -->
+    <div id="editModal" class="modal-overlay hidden">
+        <div class="modal-content-vip">
+            <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-pen-to-square text-cyan"></i> Cập Nhật Thông Tin Build</h3>
+            <form id="editForm" class="upload-form-vip">
+                <input type="hidden" id="editAppId">
+                <div class="form-row">
+                    <input type="text" id="editName" placeholder="Tên phần mềm" required class="input-vip">
+                    <input type="text" id="editVersion" placeholder="Phiên bản" required class="input-vip">
+                </div>
+                <div class="form-row">
+                    <select id="editCategory" class="input-vip">
+                        <option value="Windows">Windows</option>
+                        <option value="Android">Android</option>
+                        <option value="Tools">Tools</option>
+                    </select>
+                    <select id="editChannel" class="input-vip">
+                        <option value="stable">Stable</option>
+                        <option value="beta">Beta</option>
+                        <option value="nightly">Nightly</option>
+                    </select>
+                </div>
+                <textarea id="editDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
+                <textarea id="editChangelog" placeholder="Release Notes..." rows="2" class="input-vip"></textarea>
+                <button type="submit" class="btn-download-vip w-100"><i class="fa-solid fa-floppy-disk"></i> LƯU CẬP NHẬT</button>
+            </form>
+        </div>
+    </div>
 
     <div id="toastContainer" class="toast-container-vip"></div>
     <script src="script.js"></script>
