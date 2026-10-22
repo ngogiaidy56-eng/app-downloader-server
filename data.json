@@ -1,0 +1,15 @@
+[
+  {
+    "id": "app-demo-1",
+    "name": "Telegram Mini App Bot",
+    "version": "v2.8.0",
+    "category": "Android",
+    "filename": "app-demo.apk",
+    "size": "28.5 MB",
+    "downloads": 1420,
+    "rating": "4.9",
+    "description": "Ứng dụng nhắn tin bảo mật và quản lý Bot Telegram tự động.",
+    "changelog": "Cập nhật kết nối Webhook Cloudflare Workers D1.",
+    "createdAt": "2026-10-22T00:00:00.000Z"
+  }
+]
