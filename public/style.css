@@ -1,149 +1,249 @@
-:root {
-    --bg-dark: #07090e;
-    --card-glass: rgba(18, 24, 38, 0.7);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --accent-gold: #f59e0b;
-    --accent-cyan: #06b6d4;
-    --accent-purple: #8b5cf6;
-    --accent-green: #10b981;
-    --text-light: #f1f5f9;
-    --text-dim: #94a3b8;
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Developer Portal VIP PRO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-vip">
+
+    <div class="glow-bg"></div>
+
+    <div id="loginOverlay" class="modal-overlay">
+        <div class="modal-content-vip" style="max-width: 400px; text-align: center;">
+            <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-lock text-gold"></i> Developer Login</h2>
+            <input type="password" id="adminPassword" placeholder="Mật khẩu (admin123)..." class="input-vip" style="margin-bottom: 1rem;">
+            <button onclick="loginAdmin()" class="btn-download-vip w-100"><i class="fa-solid fa-key"></i> Đăng Nhập</button>
+        </div>
+    </div>
+
+    <header class="header-vip">
+        <div class="header-container">
+            <div class="logo-vip">
+                <i class="fa-solid fa-code-branch crown-icon"></i>
+                <span class="logo-text">AppStore <span class="badge-pro">DEV PORTAL</span></span>
+            </div>
+            <div>
+                <a href="index.html" class="btn-glass" style="text-decoration:none;"><i class="fa-solid fa-globe"></i> Trang Chủ</a>
+                <button onclick="logoutAdmin()" class="btn-glass" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> Thoát</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Thống kê tổng quan Dev -->
+        <section class="admin-stats-grid">
+            <div class="stat-card">
+                <i class="fa-solid fa-box-archive stat-icon text-cyan"></i>
+                <div><h3 id="statTotalApps">0</h3><p>Ứng dụng phát triển</p></div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-key stat-icon text-gold"></i>
+                <div><h3 id="statActiveLicenses">128</h3><p>License Key hoạt động</p></div>
+            </div>
+            <div class="stat-card">
+                <i class="fa-solid fa-bug stat-icon text-purple"></i>
+                <div><h3 id="statCrashReports">3</h3><p>Crash Logs</p></div>
+            </div>
+        </section>
+
+        <!-- Thanh chuyển đổi các Tab Developer -->
+        <div class="filter-tags" style="margin-bottom: 1.5rem;">
+            <button class="tag-btn active" onclick="switchDevTab('releaseTab', this)"><i class="fa-solid fa-upload"></i> Release Pipeline</button>
+            <button class="tag-btn" onclick="switchDevTab('licenseTab', this)"><i class="fa-solid fa-key"></i> License Manager</button>
+            <button class="tag-btn" onclick="switchDevTab('crashTab', this)"><i class="fa-solid fa-bug"></i> Crash Reports</button>
+            <button class="tag-btn" onclick="switchDevTab('apiDocsTab', this)"><i class="fa-solid fa-code"></i> Auto-Update API</button>
+        </div>
+
+        <!-- TAB 1: RELEASE PIPELINE -->
+        <section id="releaseTab" class="dev-tab-content">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Đăng Tải Build Mới</h3>
+                <form id="uploadForm" class="upload-form-vip">
+                    <div class="form-row">
+                        <input type="text" id="appName" placeholder="Tên ứng dụng / Project *" required class="input-vip">
+                        <input type="text" id="appVersion" placeholder="Phiên bản (VD: v1.2.0-beta)" required class="input-vip">
+                    </div>
+                    <div class="form-row">
+                        <select id="appCategory" class="input-vip">
+                            <option value="Windows">Windows (.exe, .zip)</option>
+                            <option value="Android">Android (.apk)</option>
+                            <option value="Tools">Công cụ AI / Tool</option>
+                        </select>
+                        <select id="appChannel" class="input-vip">
+                            <option value="stable">Kênh Stable (Chính thức)</option>
+                            <option value="beta">Kênh Beta (Thử nghiệm)</option>
+                            <option value="nightly">Kênh Nightly / Alpha</option>
+                        </select>
+                    </div>
+                    <textarea id="appDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
+                    <textarea id="appChangelog" placeholder="Release Notes / Git Commit Log..." rows="2" class="input-vip"></textarea>
+
+                    <div class="file-drop-zone" id="dropZone">
+                        <i class="fa-solid fa-file-code drop-icon"></i>
+                        <p>Kéo & thả file Build hoặc <strong>Bấm vào đây để chọn file</strong></p>
+                        <input type="file" id="softwareFile" required hidden>
+                        <span id="selectedFileName" class="selected-file-name"></span>
+                    </div>
+
+                    <button type="submit" class="btn-download-vip w-100" style="margin-top: 1rem;">
+                        <i class="fa-solid fa-rocket"></i> PHÁT HÀNH BUILD LÊN SERVER
+                    </button>
+                </form>
+            </section>
+
+            <section class="admin-section">
+                <div class="admin-table-header">
+                    <h3><i class="fa-solid fa-list-check text-gold"></i> Quản Lý Build Trên Server</h3>
+                    <div class="search-vip" style="max-width: 250px;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="adminSearchInput" placeholder="Tìm kiếm file...">
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ứng Dụng</th>
+                                <th>Version</th>
+                                <th>Kênh</th>
+                                <th>Nền Tảng</th>
+                                <th>Dung Lượng</th>
+                                <th>Lượt Tải</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminAppTable"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 2: QUẢN LÝ LICENSE KEY -->
+        <section id="licenseTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-key text-gold"></i> Tạo Khóa Kích Hoạt (License Key Generator)</h3>
+                <div class="form-row" style="margin-bottom: 1rem;">
+                    <input type="text" id="licenseClientName" placeholder="Tên khách hàng / Tester..." class="input-vip">
+                    <select id="licenseDuration" class="input-vip">
+                        <option value="30">30 Ngày (Trial)</option>
+                        <option value="365">1 Năm (VIP)</option>
+                        <option value="9999">Vĩnh Viễn (Lifetime)</option>
+                    </select>
+                    <button type="button" onclick="generateLicenseKey()" class="btn-download-vip"><i class="fa-solid fa-plus"></i> Tạo Key</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>License Key</th>
+                                <th>Khách Hàng</th>
+                                <th>Hạn Sử Dụng</th>
+                                <th>Thiết Bị Binding (HWID)</th>
+                                <th>Trạng Thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenseTableBody">
+                            <tr>
+                                <td><code>PRO-VIP-8F92-K391-9012</code></td>
+                                <td>Dev_Tester_01</td>
+                                <td>Vĩnh Viễn</td>
+                                <td><code>HWID-WINDOWS-SERVER-2026</code></td>
+                                <td><span class="badge-pro" style="background:#10b981; color:#000;">HOẠT ĐỘNG</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 3: BÁO CÁO LỖI -->
+        <section id="crashTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-bug text-purple"></i> Nhật Ký Lỗi & Crash Logs Từ Client</h3>
+                <div class="table-responsive">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Thời Gian</th>
+                                <th>Ứng Dụng</th>
+                                <th>Version</th>
+                                <th>Lỗi / Stack Trace</th>
+                                <th>HĐH</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2026-10-22 18:30</td>
+                                <td>Screen OCR Utility</td>
+                                <td>v1.0.5</td>
+                                <td><code style="color:#ef4444;">NullReferenceException: OpenCV DLL not found in system32</code></td>
+                                <td>Windows 11 x64</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <!-- TAB 4: HUỚNG DẪN INTEGRATION -->
+        <section id="apiDocsTab" class="dev-tab-content hidden">
+            <section class="admin-section">
+                <h3><i class="fa-solid fa-code text-cyan"></i> Tích Hợp Auto-Update Vào Code App Của Bạn</h3>
+                <p style="color: var(--text-dim); margin-bottom: 1rem;">App Desktop (Python/C#/Node.js/Tauri) gọi API này để tự kiểm tra bản cập nhật mới:</p>
+                
+                <div class="changelog-box-vip">
+                    <strong>GET Endpoint:</strong> <code>/api/check-update?appId=app-demo-1&currentVersion=v1.0.0</code>
+                </div>
+
+                <p style="color: var(--text-dim); margin-top: 1rem;">Mẫu Response JSON trả về cho Client:</p>
+                <pre style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 8px; color: var(--accent-cyan); overflow-x: auto;">
+{
+  "hasUpdate": true,
+  "latestVersion": "v2.8.0",
+  "downloadUrl": "https://domain-cua-ban.com/api/download/app-demo-1",
+  "changelog": "Cập nhật kết nối Webhook Cloudflare Workers D1.",
+  "size": "28.5 MB"
 }
+                </pre>
+            </section>
+        </section>
+    </main>
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    <!-- Modal Chỉnh Sửa Thông Tin App -->
+    <div id="editModal" class="modal-overlay hidden">
+        <div class="modal-content-vip">
+            <button class="modal-close" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-pen-to-square text-cyan"></i> Cập Nhật Thông Tin Build</h3>
+            <form id="editForm" class="upload-form-vip">
+                <input type="hidden" id="editAppId">
+                <div class="form-row">
+                    <input type="text" id="editName" placeholder="Tên phần mềm" required class="input-vip">
+                    <input type="text" id="editVersion" placeholder="Phiên bản" required class="input-vip">
+                </div>
+                <div class="form-row">
+                    <select id="editCategory" class="input-vip">
+                        <option value="Windows">Windows</option>
+                        <option value="Android">Android</option>
+                        <option value="Tools">Tools</option>
+                    </select>
+                    <select id="editChannel" class="input-vip">
+                        <option value="stable">Stable</option>
+                        <option value="beta">Beta</option>
+                        <option value="nightly">Nightly</option>
+                    </select>
+                </div>
+                <textarea id="editDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
+                <textarea id="editChangelog" placeholder="Release Notes..." rows="2" class="input-vip"></textarea>
+                <button type="submit" class="btn-download-vip w-100"><i class="fa-solid fa-floppy-disk"></i> LƯU CẬP NHẬT</button>
+            </form>
+        </div>
+    </div>
 
-body.dark-vip {
-    background-color: var(--bg-dark);
-    color: var(--text-light);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-.glow-bg {
-    position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-    width: 800px; height: 400px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(6, 182, 212, 0.1) 50%, transparent 70%);
-    filter: blur(80px); pointer-events: none; z-index: 0;
-}
-
-.header-vip {
-    background: rgba(7, 9, 14, 0.8); backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--card-border); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100;
-}
-
-.header-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
-.logo-vip { display: flex; align-items: center; gap: 0.6rem; font-size: 1.3rem; font-weight: 800; }
-.crown-icon { color: var(--accent-gold); font-size: 1.5rem; }
-.badge-pro { background: linear-gradient(135deg, var(--accent-gold), #ef4444); padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; color: #000; font-weight: 900; }
-
-.search-vip { position: relative; flex: 1; max-width: 420px; }
-.search-vip i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
-.search-vip input {
-    width: 100%; padding: 0.7rem 1rem 0.7rem 2.6rem;
-    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
-    border-radius: 10px; color: #fff; outline: none; transition: all 0.3s;
-}
-.search-vip input:focus { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
-
-.user-vip-status { display: flex; align-items: center; gap: 1rem; }
-.vip-points {
-    background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3);
-    padding: 0.5rem 0.9rem; border-radius: 20px; font-weight: 700; color: var(--accent-gold); font-size: 0.9rem;
-}
-.gem-icon { color: var(--accent-gold); margin-right: 0.3rem; }
-.btn-vip-upgrade {
-    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-    border: none; color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer;
-}
-
-.main-content { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; position: relative; z-index: 1; }
-.hero-vip { text-align: center; margin-bottom: 2.5rem; }
-.hero-tag { background: rgba(239, 68, 68, 0.15); color: #f87171; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; }
-.hero-vip h2 { font-size: 2.2rem; font-weight: 900; margin: 0.8rem 0 0.4rem; color: #fff; }
-.hero-vip p { color: var(--text-dim); font-size: 1rem; }
-
-.controls-vip { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1.8rem; }
-.filter-tags { display: flex; gap: 0.6rem; flex-wrap: wrap; }
-.tag-btn {
-    background: var(--card-glass); border: 1px solid var(--card-border);
-    color: var(--text-dim); padding: 0.6rem 1.2rem; border-radius: 10px; cursor: pointer; font-weight: 600;
-}
-.tag-btn.active, .tag-btn:hover { background: var(--accent-purple); color: #fff; border-color: var(--accent-purple); }
-
-.btn-batch { background: var(--accent-green); border: none; color: #fff; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 700; cursor: pointer; }
-.btn-batch.disabled { background: rgba(255,255,255,0.05); color: var(--text-dim); cursor: not-allowed; }
-
-.app-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.8rem; }
-.app-card-vip {
-    background: var(--card-glass); backdrop-filter: blur(12px); border: 1px solid var(--card-border);
-    border-radius: 16px; padding: 1.5rem; position: relative; display: flex; flex-direction: column; justify-content: space-between;
-}
-.card-select { position: absolute; top: 15px; left: 15px; }
-.app-checkbox { width: 18px; height: 18px; accent-color: var(--accent-purple); cursor: pointer; }
-
-.app-info-vip { display: flex; gap: 1rem; margin: 1rem 0 1.2rem; }
-.app-icon-vip {
-    width: 60px; height: 60px; border-radius: 14px;
-    display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #fff; flex-shrink: 0;
-}
-.tools-glow { background: linear-gradient(135deg, #06b6d4, #3b82f6); }
-.app-details-vip h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.2rem; }
-.version { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.4rem; }
-.description { font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; }
-
-.card-stats-vip { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text-dim); padding: 0.6rem 0; border-top: 1px dashed var(--card-border); margin-bottom: 1rem; }
-.text-gold { color: var(--accent-gold); }
-.speed-tag { color: var(--accent-green); font-weight: 600; }
-
-.card-actions-vip { display: flex; gap: 0.6rem; }
-.btn-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); color: #fff; padding: 0.7rem 1rem; border-radius: 10px; cursor: pointer; font-weight: 600; }
-.btn-download-vip {
-    flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-    background: linear-gradient(135deg, var(--accent-purple), #6366f1);
-    color: #fff; text-decoration: none; padding: 0.7rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem;
-}
-
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
-.modal-content-vip { background: #0f1420; border: 1px solid var(--card-border); border-radius: 20px; width: 100%; max-width: 600px; padding: 1.8rem; position: relative; max-height: 90vh; overflow-y: auto; }
-.modal-close { position: absolute; top: 18px; right: 18px; background: none; border: none; font-size: 1.4rem; color: var(--text-dim); cursor: pointer; }
-.modal-header-vip { display: flex; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
-.changelog-box-vip { background: rgba(255,255,255,0.03); padding: 0.8rem; border-radius: 10px; font-size: 0.85rem; color: var(--text-dim); margin: 0.5rem 0 1rem; }
-
-.comments-section { margin-top: 1rem; }
-.comment-input-box { display: flex; gap: 0.5rem; margin: 0.6rem 0; }
-.comment-input-box input { flex: 1; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--card-border); background: rgba(255,255,255,0.05); color: #fff; outline: none; }
-.comment-input-box button { background: var(--accent-cyan); border: none; color: #000; padding: 0 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; }
-.comments-list { font-size: 0.85rem; color: var(--text-dim); }
-.comment-item { padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-.toast-container-vip { position: fixed; bottom: 20px; right: 20px; z-index: 1100; display: flex; flex-direction: column; gap: 0.6rem; }
-.toast-vip { background: #1e293b; border-left: 4px solid var(--accent-cyan); color: #fff; padding: 0.8rem 1.2rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; }
-
-/* Admin UI */
-.admin-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-.stat-card { background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 16px; padding: 1.25rem; display: flex; align-items: center; gap: 1.2rem; }
-.stat-icon { font-size: 2.2rem; }
-.stat-card h3 { font-size: 1.6rem; font-weight: 800; }
-.stat-card p { font-size: 0.85rem; color: var(--text-dim); }
-
-.admin-section { background: var(--card-glass); border: 1px solid var(--card-border); border-radius: 18px; padding: 1.8rem; margin-bottom: 2rem; }
-.admin-section h3 { margin-bottom: 1.2rem; font-size: 1.2rem; }
-.upload-form-vip { display: flex; flex-direction: column; gap: 1rem; }
-.form-row { display: flex; gap: 1rem; flex-wrap: wrap; }
-.form-row input, .form-row select { flex: 1; min-width: 200px; }
-
-.input-vip { width: 100%; padding: 0.75rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border); border-radius: 10px; color: #fff; outline: none; }
-.input-vip:focus { border-color: var(--accent-cyan); }
-
-.file-drop-zone { border: 2px dashed var(--accent-purple); border-radius: 14px; padding: 2rem; text-align: center; cursor: pointer; background: rgba(139, 92, 246, 0.05); }
-.drop-icon { font-size: 2.5rem; color: var(--accent-purple); margin-bottom: 0.5rem; }
-.selected-file-name { display: block; margin-top: 0.5rem; font-weight: 700; color: var(--accent-green); }
-
-.table-responsive { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left; }
-.admin-table th, .admin-table td { padding: 1rem; border-bottom: 1px solid var(--card-border); }
-.admin-table th { color: var(--text-dim); font-weight: 600; }
-.btn-delete { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; }
-
-.w-100 { width: 100%; }
-.hidden { display: none !important; }
+    <div id="toastContainer" class="toast-container-vip"></div>
+    <script src="script.js"></script>
+</body>
+</html>
