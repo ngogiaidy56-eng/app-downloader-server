@@ -1,7 +1,7 @@
 {
   "name": "app-downloader-server",
-  "version": "2.0.0",
-  "description": "Full-stack Web Server tải phần mềm & Admin Dashboard VIP PRO",
+  "version": "2.5.0",
+  "description": "Full-stack Web Server tải phần mềm & Admin Developer Portal VIP PRO",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
