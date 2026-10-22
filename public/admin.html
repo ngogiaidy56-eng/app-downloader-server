@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard VIP PRO - Manager</title>
+    <title>Admin Dashboard VIP PRO</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -11,16 +11,14 @@
 
     <div class="glow-bg"></div>
 
-    <!-- Login Modal nếu chưa đăng nhập -->
     <div id="loginOverlay" class="modal-overlay">
         <div class="modal-content-vip" style="max-width: 400px; text-align: center;">
             <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-lock text-gold"></i> Admin VIP Login</h2>
-            <input type="password" id="adminPassword" placeholder="Nhập mật khẩu Admin..." class="input-vip" style="margin-bottom: 1rem;">
+            <input type="password" id="adminPassword" placeholder="Mật khẩu (admin123)..." class="input-vip" style="margin-bottom: 1rem;">
             <button onclick="loginAdmin()" class="btn-download-vip w-100"><i class="fa-solid fa-key"></i> Đăng Nhập</button>
         </div>
     </div>
 
-    <!-- Header Admin -->
     <header class="header-vip">
         <div class="header-container">
             <div class="logo-vip">
@@ -28,76 +26,61 @@
                 <span class="logo-text">AppStore <span class="badge-pro">ADMIN VIP</span></span>
             </div>
             <div>
-                <a href="/" target="_blank" class="btn-glass"><i class="fa-solid fa-globe"></i> Xem Trang Chủ</a>
+                <a href="index.html" class="btn-glass" style="text-decoration:none;"><i class="fa-solid fa-globe"></i> Trang Chủ</a>
                 <button onclick="logoutAdmin()" class="btn-glass" style="color: #ef4444;"><i class="fa-solid fa-power-off"></i> Thoát</button>
             </div>
         </div>
     </header>
 
     <main class="main-content">
-        <!-- Dashboard Thống kê -->
         <section class="admin-stats-grid">
             <div class="stat-card">
                 <i class="fa-solid fa-box-archive stat-icon text-cyan"></i>
-                <div>
-                    <h3 id="statTotalApps">0</h3>
-                    <p>Tổng phần mềm</p>
-                </div>
+                <div><h3 id="statTotalApps">0</h3><p>Tổng phần mềm</p></div>
             </div>
             <div class="stat-card">
                 <i class="fa-solid fa-cloud-arrow-down stat-icon text-gold"></i>
-                <div>
-                    <h3 id="statTotalDownloads">0</h3>
-                    <p>Tổng lượt tải về</p>
-                </div>
+                <div><h3 id="statTotalDownloads">0</h3><p>Tổng lượt tải</p></div>
             </div>
             <div class="stat-card">
                 <i class="fa-solid fa-hard-drive stat-icon text-purple"></i>
-                <div>
-                    <h3 id="statTotalStorage">0 MB</h3>
-                    <p>Dung lượng lưu trữ</p>
-                </div>
+                <div><h3 id="statTotalStorage">0 MB</h3><p>Dung lượng</p></div>
             </div>
         </section>
 
-        <!-- Form Đăng Upload Phần Mềm Mới -->
         <section class="admin-section">
-            <h3><i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Tải Lên Phần Mềm / App Mới</h3>
+            <h3><i class="fa-solid fa-cloud-arrow-up text-cyan"></i> Tải Lên Phần Mềm Mới</h3>
             <form id="uploadForm" class="upload-form-vip">
                 <div class="form-row">
-                    <input type="text" id="appName" placeholder="Tên phần mềm / App *" required class="input-vip">
-                    <input type="text" id="appVersion" placeholder="Phiên bản (VD: v1.0.0)" required class="input-vip">
+                    <input type="text" id="appName" placeholder="Tên phần mềm *" required class="input-vip">
+                    <input type="text" id="appVersion" placeholder="Phiên bản (v1.0.0)" required class="input-vip">
                 </div>
-
                 <div class="form-row">
                     <select id="appCategory" class="input-vip">
-                        <option value="Windows">Hệ điều hành Windows (.exe, .zip)</option>
-                        <option value="Android">Ứng dụng Android (.apk)</option>
-                        <option value="Tools">Công cụ AI & Automation</option>
+                        <option value="Windows">Windows (.exe, .zip)</option>
+                        <option value="Android">Android (.apk)</option>
+                        <option value="Tools">Công cụ AI / Tool</option>
                     </select>
-                    <input type="text" id="appRating" placeholder="Đánh giá (Mặc định: 5.0)" class="input-vip">
+                    <input type="text" id="appRating" placeholder="Đánh giá (5.0)" class="input-vip">
                 </div>
+                <textarea id="appDescription" placeholder="Mô tả..." rows="2" class="input-vip"></textarea>
+                <textarea id="appChangelog" placeholder="Changelog..." rows="2" class="input-vip"></textarea>
 
-                <textarea id="appDescription" placeholder="Mô tả chi tiết phần mềm..." rows="3" class="input-vip"></textarea>
-                <textarea id="appChangelog" placeholder="Nhật ký cập nhật / Changelog..." rows="2" class="input-vip"></textarea>
-
-                <!-- Thư mục File Picker -->
                 <div class="file-drop-zone" id="dropZone">
                     <i class="fa-solid fa-file-zipper drop-icon"></i>
-                    <p>Kéo & thả file (.apk, .exe, .zip) vào đây hoặc <strong>Chọn file từ máy tính</strong></p>
+                    <p>Kéo & thả file hoặc <strong>Bấm vào đây để chọn file</strong></p>
                     <input type="file" id="softwareFile" required hidden>
                     <span id="selectedFileName" class="selected-file-name"></span>
                 </div>
 
                 <button type="submit" class="btn-download-vip w-100" style="margin-top: 1rem;">
-                    <i class="fa-solid fa-upload"></i> ĐĂNG PHẦN MỀM LÊN SERVER
+                    <i class="fa-solid fa-upload"></i> ĐĂNG LÊN SERVER
                 </button>
             </form>
         </section>
 
-        <!-- Bảng Quản Lý Danh Sách File -->
         <section class="admin-section">
-            <h3><i class="fa-solid fa-list-check text-gold"></i> Danh Sách File Trên Server</h3>
+            <h3><i class="fa-solid fa-list-check text-gold"></i> Quản Lý File Trên Server</h3>
             <div class="table-responsive">
                 <table class="admin-table">
                     <thead>
@@ -107,146 +90,17 @@
                             <th>Danh Mục</th>
                             <th>Dung Lượng</th>
                             <th>Lượt Tải</th>
-                            <th>File Lưu Trữ</th>
+                            <th>Đường Dẫn</th>
                             <th>Thao Tác</th>
                         </tr>
                     </thead>
-                    <tbody id="adminAppTable">
-                        <!-- Dữ liệu render từ Server API -->
-                    </tbody>
+                    <tbody id="adminAppTable"></tbody>
                 </table>
             </div>
         </section>
     </main>
 
     <div id="toastContainer" class="toast-container-vip"></div>
-
-    <script>
-        const API_URL = '/api';
-        let authToken = localStorage.getItem('adminToken');
-
-        // Kiểm tra quyền Đăng nhập Admin
-        if (authToken) {
-            document.getElementById('loginOverlay').classList.add('hidden');
-            loadAdminApps();
-        }
-
-        async function loginAdmin() {
-            const password = document.getElementById('adminPassword').value;
-            const res = await fetch(`${API_URL}/admin/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
-            });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem('adminToken', data.token);
-                document.getElementById('loginOverlay').classList.add('hidden');
-                loadAdminApps();
-                showToastVIP('Đăng nhập quản trị thành công!');
-            } else {
-                alert(data.message);
-            }
-        }
-
-        function logoutAdmin() {
-            localStorage.removeItem('adminToken');
-            location.reload();
-        }
-
-        // Dropzone Chọn File
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('softwareFile');
-        dropZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', () => {
-            if (fileInput.files.length > 0) {
-                document.getElementById('selectedFileName').textContent = `File đã chọn: ${fileInput.files[0].name}`;
-            }
-        });
-
-        // Tải danh sách & Thống kê từ Server
-        async function loadAdminApps() {
-            const res = await fetch(`${API_URL}/apps`);
-            const apps = await res.json();
-
-            let totalDownloads = 0;
-            let totalMB = 0;
-
-            const tbody = document.getElementById('adminAppTable');
-            tbody.innerHTML = '';
-
-            apps.forEach(app => {
-                totalDownloads += app.downloads || 0;
-                totalMB += parseFloat(app.size) || 0;
-
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${app.name}</strong></td>
-                    <td><span class="version">${app.version}</span></td>
-                    <td><span class="badge-pro">${app.category}</span></td>
-                    <td>${app.size}</td>
-                    <td><i class="fa-solid fa-download text-cyan"></i> ${app.downloads}</td>
-                    <td><code>uploads/${app.filename}</code></td>
-                    <td>
-                        <button onclick="deleteApp('${app.id}')" class="btn-delete"><i class="fa-solid fa-trash"></i> Xóa</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('statTotalApps').textContent = apps.length;
-            document.getElementById('statTotalDownloads').textContent = totalDownloads.toLocaleString();
-            document.getElementById('statTotalStorage').textContent = totalMB.toFixed(1) + ' MB';
-        }
-
-        // Submit Form Upload
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('name', document.getElementById('appName').value);
-            formData.append('version', document.getElementById('appVersion').value);
-            formData.append('category', document.getElementById('appCategory').value);
-            formData.append('rating', document.getElementById('appRating').value);
-            formData.append('description', document.getElementById('appDescription').value);
-            formData.append('changelog', document.getElementById('appChangelog').value);
-            formData.append('softwareFile', fileInput.files[0]);
-
-            showToastVIP('Đang tải file lên Server...');
-            const res = await fetch(`${API_URL}/admin/upload`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const data = await res.json();
-            if (data.success) {
-                showToastVIP('Tải lên thành công!');
-                document.getElementById('uploadForm').reset();
-                document.getElementById('selectedFileName').textContent = '';
-                loadAdminApps();
-            } else {
-                alert(data.message);
-            }
-        });
-
-        // Xóa App
-        async function deleteApp(id) {
-            if (!confirm('Bạn có chắc chắn muốn xóa phần mềm này khỏi Server?')) return;
-            const res = await fetch(`${API_URL}/admin/apps/${id}`, { method: 'DELETE' });
-            const data = await res.json();
-            if (data.success) {
-                showToastVIP('Đã xóa phần mềm khỏi Server!');
-                loadAdminApps();
-            }
-        }
-
-        function showToastVIP(msg) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast-vip';
-            toast.innerHTML = `<i class="fa-solid fa-bolt" style="color:#06b6d4"></i> ${msg}`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3500);
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
