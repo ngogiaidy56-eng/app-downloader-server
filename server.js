@@ -9,14 +9,14 @@ const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 
-// Middleware
+// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(UPLOADS_DIR));
 
-// Tự động khởi tạo thư mục và database mẫu nếu chưa có
+// Tự động khởi tạo thư mục uploads và database mẫu nếu chưa tồn tại
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify([
@@ -25,6 +25,7 @@ if (!fs.existsSync(DATA_FILE)) {
             name: "Telegram Mini App Bot",
             version: "v2.8.0",
             category: "Android",
+            channel: "stable",
             filename: "app-demo.apk",
             size: "28.5 MB",
             downloads: 1420,
@@ -50,11 +51,12 @@ const upload = multer({ storage });
 const readData = () => JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
 const writeData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 
-// API Endpoints
-app.get('/api/apps', (req, res) => {
-    res.json(readData());
-});
+// --- API ENDPOINTS ---
 
+// 1. Lấy danh sách phần mềm công khai
+app.get('/api/apps', (req, res) => res.json(readData()));
+
+// 2. API Admin Đăng nhập (Mật khẩu mặc định: admin123)
 app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
     if (password === 'admin123') {
@@ -64,9 +66,10 @@ app.post('/api/admin/login', (req, res) => {
     }
 });
 
+// 3. API Upload phần mềm / Build mới
 app.post('/api/admin/upload', upload.single('softwareFile'), (req, res) => {
     try {
-        const { name, version, category, rating, description, changelog } = req.body;
+        const { name, version, category, channel, rating, description, changelog } = req.body;
         const file = req.file;
 
         if (!file) {
@@ -81,6 +84,7 @@ app.post('/api/admin/upload', upload.single('softwareFile'), (req, res) => {
             name,
             version: version || 'v1.0.0',
             category: category || 'Windows',
+            channel: channel || 'stable',
             filename: file.filename,
             size: sizeMB,
             downloads: 0,
@@ -99,6 +103,49 @@ app.post('/api/admin/upload', upload.single('softwareFile'), (req, res) => {
     }
 });
 
+// 4. API Chỉnh sửa thông tin phần mềm
+app.put('/api/admin/apps/:id', (req, res) => {
+    let apps = readData();
+    const index = apps.findIndex(a => a.id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, message: 'Không tìm thấy ứng dụng!' });
+
+    const { name, version, category, channel, rating, description, changelog } = req.body;
+    apps[index] = {
+        ...apps[index],
+        name: name || apps[index].name,
+        version: version || apps[index].version,
+        category: category || apps[index].category,
+        channel: channel || apps[index].channel,
+        rating: rating || apps[index].rating,
+        description: description !== undefined ? description : apps[index].description,
+        changelog: changelog !== undefined ? changelog : apps[index].changelog
+    };
+
+    writeData(apps);
+    res.json({ success: true, message: 'Cập nhật thông tin thành công!', app: apps[index] });
+});
+
+// 5. API Tự động kiểm tra bản cập nhật cho phần mềm / App Desktop
+app.get('/api/check-update', (req, res) => {
+    const { appId, currentVersion } = req.query;
+    const apps = readData();
+    const appItem = apps.find(a => a.id === appId || a.name.toLowerCase() === (appId || '').toLowerCase());
+
+    if (!appItem) {
+        return res.status(404).json({ hasUpdate: false, message: 'App không tồn tại' });
+    }
+
+    const hasUpdate = appItem.version !== currentVersion;
+    res.json({
+        hasUpdate,
+        latestVersion: appItem.version,
+        downloadUrl: `${req.protocol}://${req.get('host')}/api/download/${appItem.id}`,
+        changelog: appItem.changelog,
+        size: appItem.size
+    });
+});
+
+// 6. API Tải về & Tăng đếm lượt tải
 app.get('/api/download/:id', (req, res) => {
     const apps = readData();
     const appItem = apps.find(a => a.id === req.params.id);
@@ -112,6 +159,7 @@ app.get('/api/download/:id', (req, res) => {
     res.download(filePath, appItem.filename);
 });
 
+// 7. API Xóa phần mềm
 app.delete('/api/admin/apps/:id', (req, res) => {
     let apps = readData();
     const appItem = apps.find(a => a.id === req.params.id);
