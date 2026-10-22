@@ -12,7 +12,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
 body {
@@ -23,7 +23,7 @@ body {
     min-height: 100vh;
 }
 
-/* Header & Search */
+/* Header */
 .header {
     background-color: var(--card-bg);
     border-bottom: 1px solid var(--border-color);
@@ -73,14 +73,15 @@ body {
     border-radius: 8px;
     outline: none;
     font-size: 0.95rem;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
 }
 
 .search-box input:focus {
     border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* Main Content */
+/* Banner & Filter Tabs */
 .main-content {
     max-width: 1100px;
     margin: 2rem auto;
@@ -90,7 +91,7 @@ body {
 
 .banner {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .banner h2 {
@@ -100,9 +101,34 @@ body {
 
 .banner p {
     color: var(--text-muted);
+    margin-bottom: 1.5rem;
 }
 
-/* App Grid & Cards */
+.filter-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Grid & Cards */
 .app-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -143,7 +169,7 @@ body {
 .app-info {
     display: flex;
     gap: 1rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
 }
 
 .app-icon {
@@ -162,24 +188,20 @@ body {
 .windows-bg { background-color: #3b82f6; }
 .tools-bg { background-color: #8b5cf6; }
 
-.app-details h3 {
-    font-size: 1.05rem;
-    margin-bottom: 0.2rem;
-}
+.app-details h3 { font-size: 1.05rem; margin-bottom: 0.2rem; }
+.version { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+.description { font-size: 0.85rem; color: #475569; line-height: 1.3; }
 
-.version {
-    font-size: 0.8rem;
+.app-meta {
+    font-size: 0.75rem;
     color: var(--text-muted);
-    margin-bottom: 0.4rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
 }
 
-.description {
-    font-size: 0.85rem;
-    color: #475569;
-    line-height: 1.3;
-}
-
-/* Download Button */
+/* Download Buttons */
 .btn-download {
     display: flex;
     align-items: center;
@@ -195,33 +217,15 @@ body {
     transition: background-color 0.2s;
 }
 
-.btn-download:hover {
-    background-color: var(--primary-hover);
-}
+.btn-download:hover { background-color: var(--primary-hover); }
+.btn-download.external { background-color: #059669; }
+.btn-download.external:hover { background-color: #047857; }
+.btn-download.disabled { background-color: #94a3b8; pointer-events: none; }
 
-.btn-download.external {
-    background-color: #059669;
-}
-
-.btn-download.external:hover {
-    background-color: #047857;
-}
-
-/* No Results & Footer */
-.no-results {
-    text-align: center;
-    padding: 3rem 0;
-    color: var(--text-muted);
-}
-
-.no-results i {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.hidden {
-    display: none;
-}
+/* States */
+.no-results { text-align: center; padding: 3rem 0; color: var(--text-muted); }
+.no-results i { font-size: 2rem; margin-bottom: 0.5rem; }
+.hidden { display: none !important; }
 
 .footer {
     background-color: var(--card-bg);
