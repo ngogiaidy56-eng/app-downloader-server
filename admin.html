@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AppStore VIP PRO - Kho Phần Mềm Thượng Hạng</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-vip">
+
+    <div class="glow-bg"></div>
+
+    <header class="header-vip">
+        <div class="header-container">
+            <div class="logo-vip">
+                <i class="fa-solid fa-crown crown-icon"></i>
+                <span class="logo-text">AppStore <span class="badge-pro">VIP PRO</span></span>
+            </div>
+            
+            <div class="search-vip">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm siêu tốc ứng dụng, game, công cụ...">
+            </div>
+
+            <div class="user-vip-status">
+                <div class="vip-points">
+                    <i class="fa-solid fa-gem gem-icon"></i>
+                    <span id="userPoints">1,250</span> PTS
+                </div>
+                <a href="admin.html" class="btn-vip-upgrade" style="text-decoration:none;">
+                    <i class="fa-solid fa-code-branch"></i> Developer Portal
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="hero-vip">
+            <div class="hero-content">
+                <span class="hero-tag"><i class="fa-solid fa-fire"></i> EXCLUSIVE PLATFORM</span>
+                <h2>KHO PHẦN MỀM THƯỢNG HẠNG & TỰ ĐỘNG HÓA</h2>
+                <p>Tải phần mềm tốc độ cực đại trực tiếp từ máy chủ lưu trữ.</p>
+            </div>
+
+            <div class="controls-vip">
+                <div class="filter-tags">
+                    <button class="tag-btn active" data-filter="all"><i class="fa-solid fa-border-all"></i> Tất cả</button>
+                    <button class="tag-btn" data-filter="Windows"><i class="fa-brands fa-windows"></i> Windows</button>
+                    <button class="tag-btn" data-filter="Android"><i class="fa-brands fa-android"></i> Android</button>
+                    <button class="tag-btn" data-filter="Tools"><i class="fa-solid fa-screwdriver-wrench"></i> Công cụ</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="app-grid" id="appGrid">
+            <!-- Render danh sách động qua client script -->
+        </section>
+    </main>
+
+    <!-- Modal Chi Tiết -->
+    <div id="appModal" class="modal-overlay hidden">
+        <div class="modal-content-vip">
+            <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="modal-header-vip">
+                <div id="modalIcon" class="app-icon-vip tools-glow"><i class="fa-solid fa-box"></i></div>
+                <div>
+                    <h2 id="modalTitle">Tên Phần Mềm</h2>
+                    <p id="modalVersion" class="version">Phiên bản</p>
+                </div>
+            </div>
+            <div class="modal-body-vip">
+                <h4><i class="fa-solid fa-square-rss"></i> Ghi Chú Phát Hành</h4>
+                <p id="modalChangelog" class="changelog-box-vip"></p>
+
+                <h4><i class="fa-solid fa-comments"></i> Thảo Luận Cộng Đồng</h4>
+                <div class="comments-section">
+                    <div class="comment-input-box">
+                        <input type="text" id="commentInput" placeholder="Viết đánh giá...">
+                        <button onclick="postComment()"><i class="fa-solid fa-paper-plane"></i> Gửi</button>
+                    </div>
+                    <div id="commentsList" class="comments-list">
+                        <div class="comment-item">
+                            <strong><i class="fa-solid fa-user-shield text-gold"></i> Admin:</strong> Hệ thống hoạt động hoàn hảo!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer-vip" style="margin-top: 1rem;">
+                <a id="modalDownloadBtn" href="#" class="btn-download-vip w-100" download>TẢI VỀ NGAY</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container-vip"></div>
+    <script src="script.js"></script>
+</body>
+</html>
