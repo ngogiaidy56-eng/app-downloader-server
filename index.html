@@ -3,33 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kho Tải Phần Mềm</title>
+    <title>Kho Phần Mềm & Ứng Dụng</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome cho Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>Kho Ứng Dụng & Phần Mềm</h1>
-        <p>Tải xuống các ứng dụng mới nhất nhanh chóng và an toàn.</p>
+
+    <!-- Header & Thanh Tìm Kiếm -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-download logo-icon"></i>
+                <span>AppStore Hub</span>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Tìm kiếm phần mềm, ứng dụng...">
+            </div>
+        </div>
     </header>
 
-    <main class="container">
-        <!-- Phần mềm 1 -->
-        <div class="app-card">
-            <h3>Ứng Dụng Android (APK)</h3>
-            <p>Phiên bản: v1.0 | Dung lượng: 15MB</p>
-            <a href="downloads/app-v1.0.apk" class="download-btn" download>Tải Về Ngay</a>
-        </div>
+    <!-- Nội dung chính -->
+    <main class="main-content">
+        <section class="banner">
+            <h2>Tải Phần Mềm Miễn Phí & An Toàn</h2>
+            <p>Tổng hợp các ứng dụng Android, Windows và công cụ tiện ích mới nhất.</p>
+        </section>
 
-        <!-- Phần mềm 2 -->
-        <div class="app-card">
-            <h3>Công Cụ Desktop (EXE)</h3>
-            <p>Phiên bản: v2.1 | Dung lượng: 45MB</p>
-            <a href="downloads/setup-tool.exe" class="download-btn" download>Tải Về Ngay</a>
+        <!-- Danh sách thẻ ứng dụng -->
+        <section class="app-grid" id="appGrid">
+
+            <!-- Card 1: Android App -->
+            <div class="app-card" data-title="telegram app messaging" data-category="Android">
+                <div class="app-badge android">Android</div>
+                <div class="app-info">
+                    <div class="app-icon android-bg">
+                        <i class="fa-brands fa-telegram"></i>
+                    </div>
+                    <div class="app-details">
+                        <h3>Telegram Mini App</h3>
+                        <p class="version">Phiên bản: v2.4.0 • 28 MB</p>
+                        <p class="description">Ứng dụng nhắn tin bảo mật và hỗ trợ Bot tự động hóa.</p>
+                    </div>
+                </div>
+                <!-- Link tải trực tiếp từ thư mục local hoặc Cloud -->
+                <a href="downloads/telegram-app.apk" class="btn-download" download>
+                    <i class="fa-solid fa-download"></i> Tải APK
+                </a>
+            </div>
+
+            <!-- Card 2: Windows Tool -->
+            <div class="app-card" data-title="screen ocr scanner windows" data-category="Windows">
+                <div class="app-badge windows">Windows</div>
+                <div class="app-info">
+                    <div class="app-icon windows-bg">
+                        <i class="fa-solid fa-display"></i>
+                    </div>
+                    <div class="app-details">
+                        <h3>Screen OCR Utility</h3>
+                        <p class="version">Phiên bản: v1.0.5 • 45 MB</p>
+                        <p class="description">Công cụ quét màn hình và nhận diện văn bản qua OCR.</p>
+                    </div>
+                </div>
+                <a href="downloads/screen-ocr-setup.exe" class="btn-download" download>
+                    <i class="fa-solid fa-download"></i> Tải .EXE
+                </a>
+            </div>
+
+            <!-- Card 3: Link tải qua Cloud (File dung lượng lớn) -->
+            <div class="app-card" data-title="video subtitle editor tools" data-category="Cross-platform">
+                <div class="app-badge tools">Multi-Platform</div>
+                <div class="app-info">
+                    <div class="app-icon tools-bg">
+                        <i class="fa-solid fa-closed-captioning"></i>
+                    </div>
+                    <div class="app-details">
+                        <h3>AI Subtitle Studio</h3>
+                        <p class="version">Phiên bản: v3.1.0 • 350 MB</p>
+                        <p class="description">Phần mềm tạo và dịch phụ đề tự động sử dụng AI Whisper.</p>
+                    </div>
+                </div>
+                <!-- Dùng đường link Cloud khi file vượt quá giới hạn 100MB của GitHub -->
+                <a href="https://drive.google.com/uc?export=download&id=YOUR_FILE_ID" target="_blank" rel="noopener" class="btn-download external">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Tải từ Cloud
+                </a>
+            </div>
+
+        </section>
+
+        <!-- Thông báo khi không tìm thấy kết quả -->
+        <div id="noResults" class="no-results hidden">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <p>Không tìm thấy phần mềm phù hợp với từ khóa.</p>
         </div>
     </main>
 
-    <footer>
-        <p>&copy; 2026 Kho Tải Phần Mềm. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 AppStore Hub. Được lưu trữ hoàn toàn miễn phí trên GitHub Pages.</p>
     </footer>
+
+    <script src="script.js"></script>
 </body>
 </html>
